@@ -58,7 +58,7 @@ products: Product[] = [
     id: 3,
     name: 'Sony WH-1000XM5',
     description: 'Industry-leading noise-canceling headphones',
-    details: 'Over-ear, wireless, 30-hour battery, Adaptive Sound Control',
+    details: 'Over-ear, wireless, 30-hour battery, Adaptive Sound Control.Our advanced noise cancelling gets even better.Multi Noise Sensor technology.With four microphones on each earcup, this is our biggest ever step forward in noise cancelling. Ambient sound is captured even more accurately for a dramatic reduction in high frequency noise. Thanks to Auto NC Optimizer, noise cancelling performance is always and automatically optimised based on wearing conditions and external environmental factors such as atmospheric pressure.',
     price: 399,
     oldPrice: 449,
     sale: 11,
@@ -68,7 +68,8 @@ products: Product[] = [
       'assets/images/products/p2.png',
     ],
     reviews: [
-      { id: 5, userName: 'Mona', comment: 'Best noise cancellation!', rating: 5, createdAt: new Date('2026-02-20') }
+      { id: 5, userName: 'Mona', comment: 'Best noise cancellation!', rating: 5, createdAt: new Date('2026-02-20') },
+      { id: 5, userName: 'Ahmed', comment: 'Best Sound Mood! and buttary good to all days in week', rating: 4.5, createdAt: new Date('2026-02-21') }
     ],
     rating: 4.8,
     quantity: 1,

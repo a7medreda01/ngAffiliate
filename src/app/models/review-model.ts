@@ -2,6 +2,6 @@ export interface Review {
   id?: number;
   userName?: string;
   comment?: string;
-  rating?: number;
+  rating: number;
   createdAt?: Date;
 }
