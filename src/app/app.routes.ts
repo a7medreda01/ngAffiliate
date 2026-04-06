@@ -5,6 +5,7 @@ import { Login } from './features/auth/login/login';
 import { authGuard, guestGuard } from './guards/auth-guard';
 import { Register } from './features/auth/register/register';
 import { NotFound } from './features/not-found/not-found';
+import { Product } from './features/product/product/product';
 export const routes: Routes = [
   {
   path: '',
@@ -14,6 +15,7 @@ export const routes: Routes = [
     { path: '',     redirectTo: 'home', pathMatch: 'full' }
   ]
 },
+{ path: 'product/:id', component: Product },
 { path: 'login',    component: Login,    canActivate: [guestGuard] },
 { path: 'register', component: Register, canActivate: [guestGuard] },
 { path: '**', component: NotFound }

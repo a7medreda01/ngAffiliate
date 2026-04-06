@@ -1,0 +1,37 @@
+.divider {
+  width: 80%;          /* يخلي فيه فراغ يمين وشمال */
+  height: 3px;         /* تخانة الخط */
+  background-color: #ccc; 
+  margin: 20px auto;   /* يخليه في النص + مسافة فوق وتحت */
+  border-radius: 2px;  /* يخليه ناعم شوية */
+}
+
+.card-title {
+    font-size: 70px;
+    font-weight: 1000;
+    text-align: center;
+    padding: 60px 0;
+    font-family: 'Anton', sans-serif;
+
+}
+
+.view-btn {
+    padding: 16px 48px;
+    border-radius: 999px; /* مدور بالكامل */
+    border: 1px solid #d9d9d9;
+    background: transparent;
+    font-size: 18px;
+    color: #000;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin: 0 auto;
+    display: flex;
+    margin: 40px auto;
+}
+
+/* 🔥 hover */
+.view-btn:hover {
+    background: #000;
+    color: #fff;
+    border-color: #000;
+}
