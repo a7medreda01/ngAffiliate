@@ -2,7 +2,7 @@ import { CommonModule, NgClass } from '@angular/common';
 import { Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { ProductService } from '../../../services/product/product-service';
-import { Product } from '../../../models/product-model';
+import { Product } from '../../../models/product';
 import { NgModel } from '@angular/forms';
 import { ProductFaqs } from '../../../shared/components/product-faqs/product-faqs';
 
@@ -14,13 +14,13 @@ import { ProductFaqs } from '../../../shared/components/product-faqs/product-faq
 })
 export class ProductDetails {
   product!: Product;
-  specsText!: string;
-  specsArray!: string[]
+  specsText = '';
+  specsArray: string[] = [];
   constructor(private route: ActivatedRoute, private service: ProductService) {   }
   ngOnInit() {
     const id = Number(this.route.snapshot.paramMap.get('id'));
     this.product=this.service.products[id-1]
-     this.specsText = this.product.details
+     this.specsText = this.product.details ?? ''
     this.specsArray = this.specsText.split('.').filter(x => x.trim() !== '');
     // this.GetProduct();
 
@@ -74,12 +74,12 @@ export class ProductDetails {
   }
 
   increase() {
-    this.product.quantity++;
+    this.product.quantity = (this.product.quantity ?? 1) + 1;
   }
 
   decrease() {
-    if (this.product.quantity > 1) {
-      this.product.quantity--;
+    if ((this.product.quantity ?? 1) > 1) {
+      this.product.quantity = (this.product.quantity ?? 1) - 1;
     }
   }
 

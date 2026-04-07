@@ -1,0 +1,24 @@
+<div class="price-filter">
+  <h4>Price</h4>
+  <div class="range-slider">
+    <input
+      type="range"
+      [min]="min()"
+      [max]="max()"
+      [value]="value().min"
+      (input)="updateMin($event)"
+    />
+    <input
+      type="range"
+      [min]="min()"
+      [max]="max()"
+      [value]="value().max"
+      (input)="updateMax($event)"
+    />
+  </div>
+  <div class="price-inputs">
+    <span>${{ value().min }}</span>
+    <span>${{ value().max }}</span>
+  </div>
+</div>
+
