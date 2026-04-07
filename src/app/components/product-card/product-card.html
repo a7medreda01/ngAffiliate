@@ -1,0 +1,35 @@
+<div class="product-card" (click)="onAddToCart()">
+  <div class="product-image">
+    <img [src]="product().image" [alt]="product().name" loading="lazy" />
+    @if (product().discount) {
+    <div class="discount-badge">-{{ product().discount }}%</div>
+    }
+  </div>
+
+  <div class="product-info">
+    <h3 class="product-name">{{ product().name }}</h3>
+
+    <div class="rating">
+      <span class="stars">
+        @for (star of [1,2,3,4,5]; track star) {
+        <i
+          class="bi"
+          [class.bi-star-fill]="star <= product().rating"
+          [class.bi-star-half]="star > product().rating && star - 0.5 <= product().rating"
+          [class.bi-star]="star > product().rating + 0.5"
+        >
+        </i>
+        }
+      </span>
+      <span class="reviews">{{ product().rating }}/5</span>
+      <span class="reviews-count">({{ product().reviewsCount }})</span>
+    </div>
+
+    <div class="price">
+      <span class="current-price">${{ product().price }}</span>
+      @if (product().originalPrice) {
+      <span class="original-price">${{ product().originalPrice }}</span>
+      }
+    </div>
+  </div>
+</div>

@@ -9,7 +9,7 @@
 
     <!-- 🔹 Column 2 (Main Image) -->
     <div class="col-md-5 text-center main-img-div">
-      <img [src]="selectedImage || product.images[0]" class="main-img img-fluid">
+      <img [src]="selectedImage || product.images?.[0] || ''" class="main-img img-fluid">
     </div>
 
     <!-- 🔹 Column 3 (Details) -->
@@ -33,10 +33,10 @@
         </div>
         <p class="text-black-50 ms-2">{{product.rating}}/5</p>
         <p class="text-black-50 ms-3">|</p>
-        @if(product.stockQuantity >0){
+        @if((product.stockQuantity ?? 0) > 0){
         <p class="text-success ms-3">In stock</p>
         }
-        @if(product.stockQuantity ==0){
+        @if((product.stockQuantity ?? 0) == 0){
         <p class="text-danger-emphasis ms-3">Out of Stock</p>
         }
       </div>
@@ -145,7 +145,7 @@
         <!-- Title + Count -->
         <div class="d-flex gap-2 align-items-center">
           <h5 class="mb-0">All Reviews</h5>
-          <h6 class="text-muted mb-0">({{product.reviews.length}})</h6>
+          <h6 class="text-muted mb-0">({{product.reviews?.length ?? 0}})</h6>
         </div>
 
         <!-- Buttons -->

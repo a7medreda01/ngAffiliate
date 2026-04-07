@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { ProductService } from '../../../services/product/product-service';
-import { Product } from '../../../models/product-model';
+import { Product } from '../../../models/product';
 import { FourProduct } from '../../../shared/components/four-product/four-product';
 import { Hero } from '../components/hero/hero';
 import { Cartcollection } from '../components/cartcollection/cartcollection';
