@@ -2,10 +2,10 @@ import { Component } from '@angular/core';
 import { ProductService } from '../../../services/product/product-service';
 import { Product } from '../../../models/product-model';
 import { FourProduct } from '../../../shared/components/four-product/four-product';
-import { Hero } from './hero/hero';
-import { Cartcollection } from './cartcollection/cartcollection';
-import { Cardreview } from './cardreview/cardreview';
-import { Dressstyle } from './dressstyle/dressstyle';
+import { Hero } from '../components/hero/hero';
+import { Cartcollection } from '../components/cartcollection/cartcollection';
+import { Cardreview } from '../components/cardreview/cardreview';
+import { Dressstyle } from '../components/dressstyle/dressstyle';
 
 @Component({
   selector: 'app-home',
@@ -13,10 +13,23 @@ import { Dressstyle } from './dressstyle/dressstyle';
   templateUrl: './home.html',
   styleUrl: './home.css',
 })
+
 export class Home {
+products : any;
+
 constructor(private productService:ProductService){
-  this.products=this.productService.products
+  this.getProducts()
 }
-products!:Product[];
+
+
+getProducts(){
+  this.productService.getProducts().subscribe({
+    next:(res:any)=>{
+      this.products=res
+      console.log(this.products)
+    },
+    error:(error:any)=>console.log(error)
+  })
+}
 
 }

@@ -19,7 +19,7 @@ export class ProductDetails {
   constructor(private route: ActivatedRoute, private service: ProductService) {   }
   ngOnInit() {
     const id = Number(this.route.snapshot.paramMap.get('id'));
-    this.product=this.service.products[id-1]
+    // this.product=this.service.products[id-1]
      this.specsText = this.product.details
     this.specsArray = this.specsText.split('.').filter(x => x.trim() !== '');
     // this.GetProduct();

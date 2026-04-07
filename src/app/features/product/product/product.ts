@@ -8,7 +8,7 @@ import { ProductService } from '../../../services/product/product-service';
 
 @Component({
   selector: 'app-product',
-  imports: [RouterLink,ProductDetails,RelatedItem,FourProduct],
+  imports: [RouterLink,ProductDetails,FourProduct],
   templateUrl: './product.html',
   styleUrl: './product.css',
 })
@@ -17,7 +17,7 @@ products:any;
 
 constructor(private productservice:ProductService){ 
   
-  this.products = this.productservice.products;
+  // this.products = this.productservice.products;
 }
 
 

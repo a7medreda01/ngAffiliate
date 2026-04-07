@@ -10,5 +10,7 @@ import { CommonModule } from '@angular/common';
 })
 export class Cartcollection {
   @Input() products:any;
-
+constructor(){
+  console.log(this.products)
+}
 }
