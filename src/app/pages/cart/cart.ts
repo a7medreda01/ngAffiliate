@@ -1,14 +1,19 @@
 import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import { CartService } from '../../services/cart/cart';
+import { QuantitySelectorComponent } from '../../components/quantity-selector/quantity-selector';
+import { CartItem } from '../../models/cart-item';
 
 @Component({
   selector: 'app-cart',
   standalone: true,
   imports: [
     CommonModule,
-    FormsModule
+    FormsModule,
+    RouterLink,
+    QuantitySelectorComponent
   ],
   templateUrl: './cart.html',
   styleUrls: ['./cart.css']
@@ -42,7 +47,18 @@ export class CartComponent {
     }
   }
 
+  onCouponInput(e: Event): void {
+    const value = (e.target as HTMLInputElement | null)?.value ?? '';
+    this.couponCode.set(value);
+  }
+
   checkout(): void {
     console.log('Checkout...');
   }
+
+  async clearCart(): Promise<void> {
+    await this.cartService.clearCart();
+  }
+
+  trackByProductId = (_: number, item: CartItem) => item.productId;
 }

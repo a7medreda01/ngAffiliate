@@ -1,13 +1,24 @@
+import { environment } from '../../shared/environment/environment';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, of } from 'rxjs'; // استخدم of لعمل Mock للبيانات
+
+import {  of } from 'rxjs';
 import { Product } from '../../models/product';
+
+import { Observable } from 'rxjs/internal/Observable';
+
 
 @Injectable({
   providedIn: 'root',
 })
 export class ProductService {
   constructor(private http: HttpClient) {}
+
+
+  getProducts() :Observable<any>{
+    return this.http.get(`${environment.baseUrl}products`)
+  }
+
 
   // تعريف المصفوفة كـ Product[] يضمن لك أن البيانات مطابقة للـ Model
   products: Product[] = [
@@ -80,12 +91,7 @@ export class ProductService {
     // يمكنك إضافة بقية المنتجات هنا بنفس النمط
   ];
 
-  // دالة لجلب المنتجات لاستخدامها في الـ Components
-  getProducts(): Observable<Product[]> {
-    return of(this.products);
-  }
 
-  // دالة لجلب منتج واحد بالـ ID
   getProductById(id: number): Observable<Product | undefined> {
     return of(this.products.find(p => p.id === id));
   }

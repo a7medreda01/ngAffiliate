@@ -1,11 +1,17 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, of } from 'rxjs';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { Observable, catchError, map, of } from 'rxjs';
 import { Product, Category, FilterOptions } from '../../models/product';
+import { environment } from '../../shared/environment/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ProductService {
+  constructor(private readonly http: HttpClient) {}
+  private readonly apiUrl = `${environment.baseUrl}products`;
+  private readonly categoriesUrl = `${environment.baseUrl}categories`;
+  private readonly apiOrigin = environment.baseUrl.replace(/\/api\/?$/, '');
 
   private products: Product[] = [
     {
@@ -119,38 +125,98 @@ export class ProductService {
   ];
 
   getProducts(filters?: FilterOptions): Observable<Product[]> {
-    let filtered = [...this.products];
+    let params = new HttpParams();
+    if (filters?.minPrice != null) params = params.set('minPrice', filters.minPrice);
+    if (filters?.maxPrice != null) params = params.set('maxPrice', filters.maxPrice);
 
-    if (filters) {
-      if (filters.categories.length > 0) {
-        filtered = filtered.filter(p => !!p.category && filters.categories.includes(p.category));
-      }
-      filtered = filtered.filter(p =>
-        p.price >= filters.minPrice && p.price <= filters.maxPrice
-      );
-
-      // Sorting
-      switch (filters.sortBy) {
-        case 'price-low':
-          filtered.sort((a, b) => a.price - b.price);
-          break;
-        case 'price-high':
-          filtered.sort((a, b) => b.price - a.price);
-          break;
-        case 'popular':
-          filtered.sort((a, b) => (b.reviewsCount ?? 0) - (a.reviewsCount ?? 0));
-          break;
-      }
-    }
-
-    return of(filtered);
+    return this.http.get<any[]>(this.apiUrl, { params }).pipe(
+      map((res) => {
+        let mapped = res.map((p) => this.mapApiProduct(p));
+        if (filters?.categories?.length) {
+          mapped = mapped.filter((x) => !!x.category && filters.categories.includes(x.category));
+        }
+        if (filters) {
+          switch (filters.sortBy) {
+            case 'price-low':
+              mapped.sort((a, b) => a.price - b.price);
+              break;
+            case 'price-high':
+              mapped.sort((a, b) => b.price - a.price);
+              break;
+            case 'popular':
+              mapped.sort((a, b) => (b.reviewsCount ?? 0) - (a.reviewsCount ?? 0));
+              break;
+          }
+        }
+        return mapped;
+      }),
+      catchError(() => {
+        // fallback local if API unavailable
+        return of(this.filterLocalProducts(filters));
+      })
+    );
   }
 
   getCategories(): Observable<Category[]> {
-    return of(this.categories);
+    return this.http.get<any[]>(this.categoriesUrl).pipe(
+      map((res) => {
+        const mapped = res.map((c) => ({
+          id: String(c.slug || this.slugify(c.name || 'category')),
+          name: c.name || 'Category',
+          count: 0
+        } satisfies Category));
+        this.categories = mapped;
+        return mapped;
+      }),
+      catchError(() => of(this.categories))
+    );
   }
 
   getProductById(id: number): Observable<Product | undefined> {
     return of(this.products.find(p => p.id === id));
+  }
+
+  private slugify(value: string): string {
+    return value.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+  }
+
+  private mapApiProduct(p: any): Product {
+    const imageUrl = p.imageUrl ? `${this.apiOrigin}/images/products/${p.imageUrl}` : 'assets/images/placeholder.png';
+    const categorySlug = this.slugify(String(p.categoryName || ''));
+    return {
+      id: p.id,
+      name: p.name ?? 'Product',
+      description: p.description ?? '',
+      price: Number(p.price ?? 0),
+      image: imageUrl,
+      rating: 4,
+      reviewsCount: 0,
+      stockQuantity: Number(p.stock ?? 0),
+      quantity: 1,
+      brandName: p.merchantName ?? '',
+      category: categorySlug,
+      isActive: String(p.status ?? '').toLowerCase() === 'active'
+    };
+  }
+
+  private filterLocalProducts(filters?: FilterOptions): Product[] {
+    let filtered = [...this.products];
+    if (!filters) return filtered;
+    if (filters.categories.length > 0) {
+      filtered = filtered.filter(p => !!p.category && filters.categories.includes(p.category));
+    }
+    filtered = filtered.filter(p => p.price >= filters.minPrice && p.price <= filters.maxPrice);
+    switch (filters.sortBy) {
+      case 'price-low':
+        filtered.sort((a, b) => a.price - b.price);
+        break;
+      case 'price-high':
+        filtered.sort((a, b) => b.price - a.price);
+        break;
+      case 'popular':
+        filtered.sort((a, b) => (b.reviewsCount ?? 0) - (a.reviewsCount ?? 0));
+        break;
+    }
+    return filtered;
   }
 }

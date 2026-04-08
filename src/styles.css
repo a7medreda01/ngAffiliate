@@ -1,6 +1,9 @@
 body{
-font-family: 'Nunito', sans-serif !important;
-
+font-family: 'Nunito', sans-serif;
+height: 100%;
+}
+html {
+height: 100%;
 }
 :root {
   /* --primary-color: ; */

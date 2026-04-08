@@ -1,0 +1,169 @@
+<!-- Page Wrapper -->
+<div class="page-wrap">
+
+  <!-- ══ LEFT: BRAND ══ -->
+  <div class="left-panel">
+    <div class="deco-grid"></div>
+
+    <div class="left-top">
+      <div class="brand-mark">SOUQ</div>
+      <div class="brand-tagline">Premium Marketplace</div>
+    </div>
+
+    <div class="left-middle">
+      <div class="left-headline">Start<br>selling<br>or earning<br>today.</div>
+      <div class="left-desc">
+        Whether you're a merchant listing<br>
+        your products, or a marketer<br>
+        growing your income — we've<br>
+        built the tools for you.
+      </div>
+    </div>
+
+    <div class="left-bottom">
+      <div class="already-text">Already have an account?</div>
+      <a class="btn-outline" routerLink="/login">Sign In</a>
+    </div>
+  </div>
+
+  <!-- ══ RIGHT: FORM ══ -->
+  <div class="right-panel">
+    <div class="reg-title">Create account</div>
+    <div class="reg-subtitle">Choose your role to get started</div>
+
+    <!-- Progress bar -->
+    <div class="step-bar">
+      <div class="step-dot done"></div>
+      <div class="step-dot done"></div>
+      <div class="step-dot"></div>
+      <div class="step-dot"></div>
+    </div>
+
+    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+
+      <!-- Role Selection -->
+      <div class="section-label">I am joining as</div>
+      <div class="role-cards">
+
+        <div class="role-card"
+             [class.active]="registerForm.get('role')?.value === 'trader'"
+             (click)="selectRole('trader')">
+          <div class="role-icon">
+            <svg viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="2" y="6" width="14" height="10" rx="1.5" stroke="#555" stroke-width="1.4"/>
+              <path d="M6 6V5a3 3 0 116 0v1" stroke="#555" stroke-width="1.4" stroke-linecap="round"/>
+              <path d="M6 11.5h6" stroke="#555" stroke-width="1.2" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div class="role-name">Trader</div>
+          <div class="role-desc">List products &amp; manage your store</div>
+        </div>
+
+        <div class="role-card"
+             [class.active]="registerForm.get('role')?.value === 'marketer'"
+             (click)="selectRole('marketer')">
+          <div class="role-icon">
+            <svg viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M2 13l4-4.5 3 3 3.5-5 3.5 4" stroke="#555" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+              <circle cx="14" cy="4" r="2" stroke="#555" stroke-width="1.4"/>
+            </svg>
+          </div>
+          <div class="role-name">Marketer</div>
+          <div class="role-desc">Promote products &amp; earn commissions</div>
+        </div>
+
+      </div>
+
+      <!-- Form Fields -->
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label" for="first-name">First name</label>
+          <input class="form-input" type="text" id="first-name" formControlName="firstName" placeholder="Ahmed" autocomplete="given-name" required />
+          @if (registerForm.get('firstName')?.touched && registerForm.get('firstName')?.errors?.['required']) {
+             <span class="err">First name is required</span>
+            }
+            @if (registerForm.get('firstName')?.touched && registerForm.get('firstName')?.errors?.['minlength']) {
+            <span class="err">At least 4 characters</span>
+            }
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="last-name">Last name</label>
+          <input class="form-input" type="text" id="last-name" formControlName="lastName" placeholder="Hassan" autocomplete="family-name" required />
+          @if (registerForm.get('lastName')?.touched && registerForm.get('lastName')?.errors?.['required']) {
+              <span class="err">Last name is required</span>
+            }
+            @if (registerForm.get('lastName')?.touched && registerForm.get('lastName')?.errors?.['minlength']) {
+            <span class="err">At least 4 characters</span>
+            }
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label" for="email">Email address</label>
+          <input class="form-input" type="email" id="email" formControlName="email" placeholder="you@example.com" autocomplete="email" required />
+            @if (registerForm.get('email')?.touched && registerForm.get('email')?.errors?.['required']) {
+           <span class="err">Email is required</span>
+             }
+           @if (registerForm.get('email')?.touched && registerForm.get('email')?.errors?.['pattern']) {
+           <span class="err">Enter a valid email address</span>
+           }
+        </div>
+       <div class="form-group">
+          <label class="form-label" for="Phone">Phone Number</label>
+          <input class="form-input" type="tel" id="Phone" formControlName="phoneNumber" placeholder="123-456-7890" autocomplete="tel" required />
+           @if (registerForm.get('phoneNumber')?.touched && registerForm.get('phoneNumber')?.errors?.['required']) {
+            <span class="err">Phone number is required</span>
+                 }
+           @if (registerForm.get('phoneNumber')?.touched && registerForm.get('phoneNumber')?.errors?.['pattern']) {
+           <span class="err">Enter a valid Egyptian phone number</span>
+             }
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label" for="password">Password</label>
+          <input class="form-input" type="password" id="password" formControlName="password" placeholder="••••••••" autocomplete="new-password" required />
+            @if (registerForm.get('password')?.touched && registerForm.get('password')?.errors?.['required']) {
+              <span class="err">Password is required</span>
+                   }
+            @if (registerForm.get('password')?.touched && registerForm.get('password')?.errors?.['minlength']) {
+              <span class="err">At least 8 characters</span>
+            }
+            @if (registerForm.get('password')?.touched && registerForm.get('password')?.errors?.['pattern']) {
+            <span class="err">Must contain uppercase, number and symbol</span>
+           }
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="confirm-password">Confirm password</label>
+          <input class="form-input" type="password" id="confirm-password" formControlName="confirmPassword" placeholder="••••••••" autocomplete="new-password" required />
+            @if (registerForm.get('confirmPassword')?.touched && registerForm.errors?.['passwordMismatch']) {
+              <span class="err">Passwords don't match</span>
+             }
+        </div>
+      </div>
+      @if (errorMessage) {
+  <div class="error-box">
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+      <circle cx="8" cy="8" r="7" stroke="#e53e3e" stroke-width="1.5"/>
+      <path d="M8 5v3M8 10.5v.5" stroke="#e53e3e" stroke-width="1.5" stroke-linecap="round"/>
+    </svg>
+    {{ errorMessage }}
+  </div>
+}
+
+      <!-- Hidden role input (sent with form) -->
+      <input type="hidden" id="selected-role" formControlName="role" />
+
+      <button class="btn-primary" type="submit" [disabled]="isLoading">{{ isLoading ? 'Creating...' : 'Create Account' }}</button>
+
+      <div class="terms-text">
+        By creating an account you agree to our
+        <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.
+      </div>
+
+    </form>
+  </div>
+
+</div>

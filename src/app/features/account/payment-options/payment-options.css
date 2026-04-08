@@ -1,0 +1,14 @@
+/* Center balance */
+.card.text-center h2 {
+  font-size: 2.5rem;
+}
+
+/* Transaction table */
+.table th, .table td {
+  vertical-align: middle;
+}
+
+/* Add money card */
+.card .btn {
+  height: 100%;
+}

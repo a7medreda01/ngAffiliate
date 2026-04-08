@@ -46,9 +46,12 @@ import { Product, Category, FilterOptions, SortOption } from '../../models/produ
             <ul>
               @for (cat of categories(); track cat.id) {
                 <li>
-                  <label>
-
-                    <span>{{ cat.name }}</span>
+                  <label class="cat-row">
+                    <input
+                      type="checkbox"
+                      [checked]="selectedCategories().includes(cat.id)"
+                      (change)="toggleCategory(cat.id)" />
+                    <span class="name">{{ cat.name }}</span>
                     <span class="count">{{ cat.count }}</span>
                   </label>
                 </li>
@@ -64,9 +67,10 @@ import { Product, Category, FilterOptions, SortOption } from '../../models/produ
             (valueChange)="updatePriceRange($event)">
           </app-price-filter>
 
-          <button class="btn-apply" (click)="applyFilters()">
-            Apply Filter
-          </button>
+          <div class="filter-actions">
+            <button class="btn-apply" (click)="applyFilters()">Apply Filter</button>
+            <button class="btn-clear" type="button" (click)="clearFilters()">Clear</button>
+          </div>
         </aside>
 
         <!-- Main -->
@@ -75,12 +79,7 @@ import { Product, Category, FilterOptions, SortOption } from '../../models/produ
             <h1>Casual</h1>
             <div class="toolbar">
               <span>Showing {{ products().length }} of {{ totalCount() }}</span>
-              <select [value]="sortBy()" (change)="onSortChange($event)">
-                <option value="popular">Most Popular</option>
-                <option value="newest">Newest</option>
-                <option value="price-low">Price: Low to High</option>
-                <option value="price-high">Price: High to Low</option>
-              </select>
+              <!-- Figma request: filter by category + price only (hide sort UI) -->
             </div>
           </div>
 
@@ -208,6 +207,13 @@ export class CategoryComponent {
   }
 
   applyFilters(): void {
+    this.currentPage.set(1);
+    this.loadProducts();
+  }
+
+  clearFilters(): void {
+    this.selectedCategories.set([]);
+    this.priceRange.set({ min: 0, max: 500 });
     this.currentPage.set(1);
     this.loadProducts();
   }
