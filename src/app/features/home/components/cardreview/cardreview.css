@@ -1,0 +1,39 @@
+.card-title {
+    font-size: 70px;
+    font-weight: 1000;
+    text-align: center;
+    /* padding: 60px 0; */
+    font-family: 'Anton', sans-serif;
+    display: flex;
+    text-align: left;
+}
+
+.card-inside-card {
+    font-size: 30px;
+    font-weight: 150;
+    text-align: center;
+    /* padding: 60px 0; */
+    font-family: 'Anton', sans-serif;
+     display: flex;
+    text-align: left;
+}
+
+.card-inside-card {
+  font-size: 20px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.badge {
+  background-color: #07f178; /* لون أزرق */
+  color: white;
+  font-size: 12px;
+  width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+}

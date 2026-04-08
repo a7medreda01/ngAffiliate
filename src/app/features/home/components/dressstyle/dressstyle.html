@@ -1,66 +1,39 @@
- <div class="home-container container">
- <div class="container">
-    <h2 class="section-title">Browse by Dress Style</h2>
- 
-    <div class="grid">
- 
-      <!-- Casual -->
-      <div class="style-card card-casual">
-        <span class="card-label">Casual</span>
-        <img
-          src="https://images.unsplash.com/photo-1552374196-1ab2a1c593e8?w=400&q=80&fit=crop&crop=top"
-          alt="Casual style"
-          onerror="this.style.display='none'"
-        />
-      </div>
- 
-      <!-- Formal -->
-      <div class="style-card card-formal wide">
-        <span class="card-label">Formal</span>
-        <img
-          src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&q=80&fit=crop&crop=top"
-          alt="Formal style"
-          onerror="this.style.display='none'"
-        />
-      </div>
- 
-      <!-- Row 2: Party (large) + Gym (small) -->
-      <div class="row2">
-        <div class="style-card card-party wide">
-          <span class="card-label">Party</span>
-          <img
-            src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=600&q=80&fit=crop&crop=top"
-            alt="Party style"
-            onerror="this.style.display='none'"
-          />
-        </div>
- 
-        <div class="style-card card-gym">
-          <span class="card-label">Gym</span>
-          <img
-            src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&q=80&fit=crop&crop=top"
-            alt="Gym style"
-            onerror="this.style.display='none'"
-          />
+<div class="container-custom">
+  <div class="card-title">BROWSE BY DRESS STYLE</div>
+
+  <!-- الصف الأول: Casual (يسار - أصغر) + Formal (يمين - أكبر) -->
+  <div class="row">
+    <div class="col-12 casual-col">
+      <div class="style-card casual-bg">
+        <div class="card-content">
+          <div class="category-name">Casual</div>
         </div>
       </div>
- 
     </div>
- 
-    <!-- Pagination -->
-    <div class="pagination">
-      <button class="page-btn" onclick="changePage(-1)">&#8249;</button>
-      <span class="page-indicator" id="pageDisplay">1 / 9</span>
-      <button class="page-btn" onclick="changePage(1)">&#8250;</button>
+    <div class="col-12 formal-col">
+      <div class="style-card formal-bg">
+        <div class="card-content">
+          <div class="category-name">Formal</div>
+        </div>
+      </div>
     </div>
   </div>
- </div>
-  <script>
-    let currentPage = 1;
-    const totalPages = 9;
- 
-    function changePage(dir) {
-      currentPage = Math.min(Math.max(currentPage + dir, 1), totalPages);
-      document.getElementById('pageDisplay').textContent = currentPage + ' / ' + totalPages;
-    }
-  </script>
+
+  <!-- الصف الثاني: Gym (يسار - أكبر) + Party (يمين - أصغر) -->
+  <div class="row">
+    <div class="col-12 gym-col">
+      <div class="style-card gym-bg">
+        <div class="card-content">
+          <div class="category-name">Gym</div>
+        </div>
+      </div>
+    </div>
+    <div class="col-12 party-col">
+      <div class="style-card party-bg">
+        <div class="card-content">
+          <div class="category-name">Party</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
