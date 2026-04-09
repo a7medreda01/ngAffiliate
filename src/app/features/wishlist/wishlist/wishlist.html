@@ -1,2 +1,102 @@
-<app-items [products] ="products"></app-items>
-<app-just-for-you></app-just-for-you>
+<div class="container py-4">
+
+  <!-- Header -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h5>WishList ({{ products.length }})</h5>
+    <button class="btn btn-outline-dark" (click)="moveAllToBag()">
+      Move All To Bag
+    </button>
+  </div>
+
+  <!-- Loading -->
+  @if (isLoading) {
+    <div class="text-center py-5">
+      <div class="spinner-border" role="status"></div>
+    </div>
+  }
+
+  <!-- Error -->
+  @if (errorMsg) {
+    <div class="alert alert-danger">{{ errorMsg }}</div>
+  }
+
+  <!-- Empty -->
+  @if (!isLoading && products.length === 0) {
+    <div class="text-center py-5">
+      <p class="text-muted">Your wishlist is empty</p>
+      <a routerLink="/shop" class="btn btn-dark mt-2">Go Shopping</a>
+    </div>
+  }
+
+  <!-- Products Grid -->
+  <div class="row g-3">
+    @for (product of products; track product.id) {
+      <div class="col-6 col-md-4 col-lg-3">
+        <div class="card product-card border-0 position-relative">
+
+          <!-- Sale Badge -->
+          @if (product.discountPercentage || product.sale) {
+            <span class="badge bg-danger sale-badge">
+              -{{ product.discountPercentage || product.sale }}%
+            </span>
+          }
+
+          <!-- Remove Button -->
+          <button
+            class="btn remove-btn position-absolute top-0 end-0 m-2"
+            (click)="removeFromWishlist(product.id)">
+            <i class="bi bi-x-circle"></i>
+          </button>
+
+          <!-- Product Image -->
+          <img
+            [src]="product.image || product.imageUrl"
+            [alt]="product.name"
+            class="card-img-top product-img p-3"
+            [routerLink]="['/product', product.id]"
+            style="cursor: pointer"
+          />
+
+          <!-- Add To Cart Button -->
+          <div class="add-to-cart-overlay">
+            <button class="btn btn-dark w-100">Add To Cart</button>
+          </div>
+
+          <!-- Product Info -->
+          <div class="card-body pt-0">
+            <h6 class="card-title">{{ product.name }}</h6>
+
+            <div class="d-flex gap-2 align-items-center">
+              <span class="text-danger fw-bold">${{ product.price }}</span>
+              @if (product.oldPrice || product.originalPrice) {
+                <span class="text-muted text-decoration-line-through">
+                  ${{ product.oldPrice || product.originalPrice }}
+                </span>
+              }
+            </div>
+
+            <!-- Stars -->
+            <div class="stars mt-1">
+              @for (star of getStars(product.rating); track star) {
+                <i class="bi"
+                   [class.bi-star-fill]="star <= product.rating"
+                   [class.bi-star-half]="star - 0.5 === product.rating"
+                   [class.bi-star]="star > product.rating"
+                   style="color: #FFAD33">
+                </i>
+              }
+              <small class="text-muted ms-1">({{ product.rating }})</small>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    }
+  </div>
+
+  <!-- Just For You Section -->
+  <div class="mt-5">
+    <app-just-for-you />
+  </div>
+
+</div>

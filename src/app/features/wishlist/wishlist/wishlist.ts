@@ -1,56 +1,63 @@
-import { Component } from '@angular/core';
-import { Items } from '../items/items';
-import { JustForYou } from '../just-for-you/just-for-you';
+import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Router, RouterLink } from '@angular/router';
+import { WishlistService } from '../../../services/wishlist/wishlist';
+import { JustForYou } from '../just-for-you/just-for-you';
 
 @Component({
   selector: 'app-wishlist',
-  imports: [Items,JustForYou,CommonModule],
+  standalone: true,
+  imports: [CommonModule, RouterLink, JustForYou],
   templateUrl: './wishlist.html',
   styleUrl: './wishlist.css',
 })
-export class Wishlist {
-products: any[] = [
-  {
-    name: 'HeadPhone',
-    price: 20,
-    oldPrice: 30,
-    rating: 4.5,
-    image: 'assets/images/products/p2.png',
-    sale: 30
-  },
-  {
-    name: 'Products Four',
-    price: 25,
-    oldPrice: 35,
-    rating: 3.5,
-    image: 'assets/images/products/p5.png',
-    sale: 28
-  },
-  {
-    name: 'Product Num5',
-    price: 15,
-    oldPrice: 20,
-    rating: 4,
-    image: 'assets/images/products/p1.png',
-    sale: 25
-  },
-  {
-    name: 'Hair Device',
-    price: 18,
-    oldPrice: 30,
-    rating: 5,
-    image: 'assets/images/products/p4.png',
-    sale: 40
-  },
-  {
-    name: 'Airpods',
-    price: 22,
-    oldPrice: 30,
-    rating: 4.2,
-    image: 'assets/images/products/p3.png',
-    sale: 27
-  }
-];
+export class Wishlist implements OnInit {
+  private wishlistService = inject(WishlistService);
+  private router          = inject(Router);
 
+  products:    any[] = [];
+  isLoading          = false;
+  errorMsg           = '';
+
+  ngOnInit(): void {
+    this.loadWishlist();
+  }
+
+  loadWishlist(): void {
+    this.isLoading = true;
+    this.wishlistService.getWishlist().subscribe({
+      next: (res) => {
+        this.products  = res.data || res.items || res || [];
+        this.wishlistService.updateSignals(this.products);
+        this.isLoading = false;
+      },
+      error: (err) => {
+        this.errorMsg  = err.error?.message || 'Failed to load wishlist';
+        this.isLoading = false;
+      }
+    });
+  }
+
+  removeFromWishlist(productId: number): void {
+    this.wishlistService.removeFromWishlist(productId).subscribe({
+      next: () => {
+        this.products = this.products.filter(p => p.id !== productId);
+        this.wishlistService.updateSignals(this.products);
+      },
+      error: (err) => {
+        this.errorMsg = err.error?.message || 'Failed to remove item';
+      }
+    });
+  }
+
+  moveAllToBag(): void {
+    // لو عندك endpoint ليها
+    // this.http.post('/api/Wishlist/moveAll', {})
+    // دلوقتي هتنقلهم يدوياً للكارت واحد واحد
+    this.router.navigate(['/cart']);
+  }
+
+  getStars(rating: number): number[] {
+    return Array(5).fill(0).map((_, i) => i + 1);
+  }
 }
