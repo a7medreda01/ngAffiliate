@@ -3,7 +3,7 @@
   <!-- Header -->
   <div class="d-flex justify-content-between align-items-center mb-4">
     <h5>WishList ({{ products.length }})</h5>
-    <button class="btn btn-outline-dark" (click)="moveAllToBag()">
+    <button class="btn btn-outline-dark px-4" (click)="moveAllToBag()">
       Move All To Bag
     </button>
   </div>
@@ -24,68 +24,58 @@
   @if (!isLoading && products.length === 0) {
     <div class="text-center py-5">
       <p class="text-muted">Your wishlist is empty</p>
-      <a routerLink="/shop" class="btn btn-dark mt-2">Go Shopping</a>
+      <a routerLink="/home" class="btn btn-dark mt-2">Go Shopping</a>
     </div>
   }
 
   <!-- Products Grid -->
-  <div class="row g-3">
+  <div class="row g-4">
     @for (product of products; track product.id) {
       <div class="col-6 col-md-4 col-lg-3">
-        <div class="card product-card border-0 position-relative">
+        <div class="product-card position-relative">
 
-          <!-- Sale Badge -->
-          @if (product.discountPercentage || product.sale) {
-            <span class="badge bg-danger sale-badge">
-              -{{ product.discountPercentage || product.sale }}%
-            </span>
-          }
+          <!-- Image Container -->
+          <div class="img-container position-relative">
 
-          <!-- Remove Button -->
-          <button
-            class="btn remove-btn position-absolute top-0 end-0 m-2"
-            (click)="removeFromWishlist(product.id)">
-            <i class="bi bi-x-circle"></i>
-          </button>
+            <!-- Sale Badge -->
+            @if (product.discountPercentage || product.sale) {
+              <span class="sale-badge">
+                -{{ product.discountPercentage || product.sale }}%
+              </span>
+            }
 
-          <!-- Product Image -->
-          <img
-            [src]="product.image || product.imageUrl"
-            [alt]="product.name"
-            class="card-img-top product-img p-3"
-            [routerLink]="['/product', product.id]"
-            style="cursor: pointer"
-          />
+            <!-- Delete Button -->
+            <button
+              class="delete-btn"
+              (click)="removeFromWishlist(product.productId || product.id)">
+              <i class="bi bi-trash"></i>
+            </button>
 
-          <!-- Add To Cart Button -->
-          <div class="add-to-cart-overlay">
-            <button class="btn btn-dark w-100">Add To Cart</button>
+            <!-- Product Image -->
+            <img
+              [src]="product.imageUrl || product.image || 'assets/images/placeholder.png'"
+              [alt]="product.name"
+              class="product-img"
+              [routerLink]="['/product', product.productId || product.id]"
+            />
+
+            <!-- Add To Cart Overlay -->
+            <button class="add-to-cart-btn">
+              <i class="bi bi-cart2 me-2"></i>Add To Cart
+            </button>
+
           </div>
 
           <!-- Product Info -->
-          <div class="card-body pt-0">
-            <h6 class="card-title">{{ product.name }}</h6>
-
+          <div class="product-info mt-2">
+            <h6 class="product-name">{{ product.name }}</h6>
             <div class="d-flex gap-2 align-items-center">
-              <span class="text-danger fw-bold">${{ product.price }}</span>
+              <span class="price">${{ product.price }}</span>
               @if (product.oldPrice || product.originalPrice) {
-                <span class="text-muted text-decoration-line-through">
+                <span class="old-price">
                   ${{ product.oldPrice || product.originalPrice }}
                 </span>
               }
-            </div>
-
-            <!-- Stars -->
-            <div class="stars mt-1">
-              @for (star of getStars(product.rating); track star) {
-                <i class="bi"
-                   [class.bi-star-fill]="star <= product.rating"
-                   [class.bi-star-half]="star - 0.5 === product.rating"
-                   [class.bi-star]="star > product.rating"
-                   style="color: #FFAD33">
-                </i>
-              }
-              <small class="text-muted ms-1">({{ product.rating }})</small>
             </div>
           </div>
 
@@ -94,7 +84,7 @@
     }
   </div>
 
-  <!-- Just For You Section -->
+  <!-- Just For You -->
   <div class="mt-5">
     <app-just-for-you />
   </div>
