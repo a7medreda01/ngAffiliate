@@ -27,7 +27,7 @@ export class Wishlist implements OnInit {
     this.isLoading = true;
     this.wishlistService.getWishlist().subscribe({
       next: (res) => {
-        this.products  = res.data || res.items || res || [];
+        this.products = Array.isArray(res) ? res : [];;
         this.wishlistService.updateSignals(this.products);
         this.isLoading = false;
       },
@@ -38,16 +38,20 @@ export class Wishlist implements OnInit {
     });
   }
 
-  removeFromWishlist(productId: number): void {
-    this.wishlistService.removeFromWishlist(productId).subscribe({
-      next: () => {
-        this.products = this.products.filter(p => p.id !== productId);
-        this.wishlistService.updateSignals(this.products);
-      },
-      error: (err) => {
-        this.errorMsg = err.error?.message || 'Failed to remove item';
-      }
-    });
+ // في removeFromWishlist غيّر
+removeFromWishlist(productId: number): void {
+  this.wishlistService.removeFromWishlist(productId).subscribe({
+    next: () => {
+      // ← productId أو id حسب الـ API response
+      this.products = this.products.filter(
+        p => (p.productId || p.id) !== productId
+      );
+      this.wishlistService.updateSignals(this.products);
+    },
+    error: (err) => {
+      this.errorMsg = err.error?.message || 'Failed to remove item';
+    }
+  });
   }
 
   moveAllToBag(): void {
