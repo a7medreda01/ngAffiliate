@@ -3,25 +3,45 @@ import { environment } from '../../shared/environment/environment.prod';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
+export interface OrderItem {
+  productId:   number;
+  productName: string;
+  price:       number;
+  quantity:    number;
+}
+
+export interface Order {
+  id:                     number;
+  totalPrice:             number;
+  affiliateCommissionPct: number;
+  status:                 string;
+  createdAt:              string;
+  items:                  OrderItem[]; // ← أضف دي
+}
+
 @Injectable({
   providedIn: 'root',
 })
 export class OrderService {
-  constructor(private http: HttpClient) { }
-  userId: string | null = localStorage.getItem('userId');
+  constructor(private http: HttpClient) {}
 
-  createOrder(order:any): Observable<any> {
-    console.log(order)
-    return this.http.post(`${environment.baseUrl}orders/create`, order);
+  // ─── GET /api/Orders ───────────────────────────────
+  getOrders(): Observable<Order[]> {
+    return this.http.get<Order[]>(`${environment.baseUrl}Orders`);
   }
-  getUserOrders() {
-  return this.http.get<any[]>(`${environment.baseUrl}orders/user/${this.userId}`);
-}
-  getUserOrderId(id:any) {
-  return this.http.get(`${environment.baseUrl}orders/${id}`);
-}
-  // Cancel order
+
+  // ─── GET /api/Orders/{id} ──────────────────────────
+  getOrderById(id: number): Observable<Order> {
+    return this.http.get<Order>(`${environment.baseUrl}Orders/${id}`);
+  }
+
+  // ─── POST /api/Orders ──────────────────────────────
+  createOrder(order: any): Observable<any> {
+    return this.http.post(`${environment.baseUrl}Orders`, order);
+  }
+
+  // ─── PUT /api/Orders/{id}/status ───────────────────
   cancelOrder(orderId: number): Observable<any> {
-    return this.http.put(`${environment.baseUrl}orders/cancel/${orderId}`, {}); 
+    return this.http.put(`${environment.baseUrl}Orders/${orderId}/status`, { status: 'Cancelled' });
   }
 }

@@ -12,6 +12,8 @@ import { PaymentOptions } from './features/account/payment-options/payment-optio
 import { MyOrders } from './features/account/my-orders/my-orders';
 import { Wishlist } from './features/wishlist/wishlist/wishlist';
 import { Checkout } from './features/checkout/checkout';
+import { OrderDetails } from './features/account/my-orders/order-details/order-details';
+import { CartComponent } from './pages/cart/cart';
 export const routes: Routes = [
   {
     path: '',
@@ -32,11 +34,12 @@ export const routes: Routes = [
       { path: 'edit', component: EditProfile },
       { path: 'payment', component: PaymentOptions },
       { path: 'my-orders', component: MyOrders },
+      { path: 'order-details/:id', component: OrderDetails }
     ]
   },
+  { path: 'cart', component: CartComponent },
   { path: 'wishlist', component: Wishlist },
   { path: 'checkout', component: Checkout },
-  { path: 'account', component: Account },
   { path: '**', component: NotFound }
 
 ];

@@ -1,49 +1,109 @@
-<div class="edit-parent-div  p-3">
-    <h4 class="mb-3 edit">Edit Your Profile</h4>
+<div class="edit-parent-div p-3">
+  <h4 class="mb-3 edit">Edit Your Profile</h4>
 
-    <form>
-        <div class="d-flex justify-content-between gap-1 gap-lg-5 flex-column flex-lg-row">
-            <div class="mb-3 w-100">
-                <label>First Name</label>
-                <input type="text" class="form-control form-input" placeholder="Ah">
-            </div>
+  @if (isLoading) {
+    <p>Loading...</p>
+  }
 
-            <div class="mb-3 w-100">
-                <label>Last Name</label>
-                <input type="email" class="form-control form-input" placeholder="Mo">
-            </div>
-        </div>
+  <!-- ───── Profile Form ───── -->
+  <form [formGroup]="profileForm" (ngSubmit)="saveProfile()">
 
-        <div class="d-flex justify-content-between gap-1 gap-lg-5 flex-column flex-lg-row">
-            <div class="mb-3 w-100">
-                <label>Email</label>
-                <input type="text" class="form-control form-input" placeholder="ah@example.com">
-            </div>
+    <div class="d-flex justify-content-between gap-1 gap-lg-5 flex-column flex-lg-row">
+      <div class="mb-3 w-100">
+        <label>First Name</label>
+        <input type="text" class="form-control form-input" formControlName="firstName" placeholder="Ahmed" />
+        @if (profileForm.get('firstName')?.touched && profileForm.get('firstName')?.errors?.['required']) {
+          <span class="err">First name is required</span>
+        }
+      </div>
+      <div class="mb-3 w-100">
+        <label>Last Name</label>
+        <input type="text" class="form-control form-input" formControlName="lastName" placeholder="Hassan" />
+        @if (profileForm.get('lastName')?.touched && profileForm.get('lastName')?.errors?.['required']) {
+          <span class="err">Last name is required</span>
+        }
+      </div>
+    </div>
 
-            <div class="mb-3 w-100">
-                <label>Address</label>
-                <input type="email" class="form-control form-input" placeholder="10 ex ,eg">
-            </div>
-        </div>
+    <div class="d-flex justify-content-between gap-1 gap-lg-5 flex-column flex-lg-row">
+      <div class="mb-3 w-100">
+        <label>Email</label>
+        <input type="email" class="form-control form-input" formControlName="email" placeholder="you@example.com" />
+        @if (profileForm.get('email')?.touched && profileForm.get('email')?.errors?.['email']) {
+          <span class="err">Enter a valid email</span>
+        }
+      </div>
+      <div class="mb-3 w-100">
+        <label>Phone Number</label>
+        <input type="tel" class="form-control form-input" formControlName="phoneNumber" placeholder="01xxxxxxxxx" />
+        @if (profileForm.get('phoneNumber')?.touched && profileForm.get('phoneNumber')?.errors?.['pattern']) {
+          <span class="err">Enter a valid phone number</span>
+        }
+      </div>
+    </div>
 
+    @if (profileSuccess) {
+      <div class="alert alert-success mt-2">{{ profileSuccess }}</div>
+    }
+    @if (profileError) {
+      <div class="alert alert-danger mt-2">{{ profileError }}</div>
+    }
 
-        <div class="d-flex flex-column gap-1 mt-3">
-            <div class="mb-3 w-100">
-                <label>Change Password</label>
-                <input type="text" class="form-control form-input" placeholder="Current">
-            </div>
+    <div class="text-end">
+      <a class="btn p-3 m-2">Cancel</a>
+      <button type="submit" class="btn" id="save-changes-btn" [disabled]="isSavingProfile">
+        {{ isSavingProfile ? 'Saving...' : 'Save Profile' }}
+      </button>
+    </div>
 
-            <div class="mb-3 w-100">
-                <input type="email" class="form-control form-input" placeholder="New">
-            </div>
-            <div class="mb-3 w-100">
-                <input type="email" class="form-control form-input" placeholder="Confairm New">
-            </div>
-        </div>
-        <div class="text-end">
-            <a class="btn p-3 m-2" id="">Cancel</a>
-            <a class="btn" id="save-changes-btn">Save Changes</a>
-        </div>
+  </form>
 
-    </form>
+  <hr class="my-4" />
+
+  <!-- ───── Password Form (منفصلة تماماً) ───── -->
+  <form [formGroup]="passwordForm" (ngSubmit)="savePassword()">
+
+    <h5 class="mb-3">Change Password</h5>
+
+    <div class="mb-3 w-100">
+      <label>Current Password</label>
+      <input type="password" class="form-control form-input" formControlName="currentPassword" placeholder="Current password" />
+      @if (passwordForm.get('currentPassword')?.touched && passwordForm.get('currentPassword')?.errors?.['required']) {
+        <span class="err">Current password is required</span>
+      }
+    </div>
+
+    <div class="mb-3 w-100">
+      <label>New Password</label>
+      <input type="password" class="form-control form-input" formControlName="newPassword" placeholder="New password" />
+      @if (passwordForm.get('newPassword')?.touched && passwordForm.get('newPassword')?.errors?.['minlength']) {
+        <span class="err">At least 8 characters</span>
+      }
+      @if (passwordForm.get('newPassword')?.touched && passwordForm.get('newPassword')?.errors?.['pattern']) {
+        <span class="err">Must contain uppercase, number and symbol</span>
+      }
+    </div>
+
+    <div class="mb-3 w-100">
+      <label>Confirm New Password</label>
+      <input type="password" class="form-control form-input" formControlName="confirmNewPassword" placeholder="Confirm new password" />
+      @if (passwordForm.get('confirmNewPassword')?.touched && passwordForm.errors?.['mismatch']) {
+        <span class="err">Passwords don't match</span>
+      }
+    </div>
+
+    @if (passwordSuccess) {
+      <div class="alert alert-success mt-2">{{ passwordSuccess }}</div>
+    }
+    @if (passwordError) {
+      <div class="alert alert-danger mt-2">{{ passwordError }}</div>
+    }
+
+    <div class="text-end">
+      <button type="submit" class="btn" id="save-changes-btn" [disabled]="isSavingPassword || passwordForm.invalid">
+        {{ isSavingPassword ? 'Saving...' : 'Change Password' }}
+      </button>
+    </div>
+
+  </form>
 </div>
