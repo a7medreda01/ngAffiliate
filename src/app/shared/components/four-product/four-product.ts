@@ -9,6 +9,6 @@ import { ProductCard } from '../product-card/product-card';
   styleUrl: './four-product.css',
 })
 export class FourProduct {
-@Input() products:any;
+@Input() products: any[] = [];
 
 }
