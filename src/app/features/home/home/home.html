@@ -1,44 +1,16 @@
-<!-- هنا  بنحط ال commponents  -->
-<!-- <app-flash-sale></app-flash-sale>
-<app-browse-category></app-browse-category>
-<app-this-month></app-this-month>
-<app-category-banner></app-category-banner>
-<app-our-products></app-our-products>
-<app-new-arrival></app-new-arrival>
-<app-services></app-services> -->
-<!-- <div class="p-5">Home Component Her</div> -->
 <app-hero></app-hero>
-<app-cartcollection [products]="products"></app-cartcollection>
-<hr class="divider">
-<div class="card-title container ">TOP SELLING</div>
 
-<app-four-product [products]="products"></app-four-product>
+<!-- New Arrivals Section -->
+<div class="card-title container">NEW ARRIVALS</div>
+<app-four-product [products]="newProducts"></app-four-product>
 <button class="view-btn">View All</button>
+
+<hr class="divider">
+
+<!-- Top Selling Section -->
+<div class="card-title container">TOP SELLING</div>
+<app-four-product [products]="topProducts"></app-four-product>
+<button class="view-btn">View All</button>
+
 <app-cardreview></app-cardreview>
-<!-- <app-four-product [products]="products"></app-four-product> -->
 <app-dressstyle></app-dressstyle>
-<!-- 
- <div class="d-flex">
-        <div class="hero-stats">
-            <div class="stat-item">
-              <h3>200+</h3>
-              <span>International Brands</span>
-            </div>
-        
-            <div class="stat-divider"></div>
-
-            <div class="stat-item">
-              <h3>2,000+</h3>
-              <span>High-Quality Products</span>
-            </div>
-
-            <div class="stat-divider"></div>
-
-            <div class="stat-item">
-              <h3>30,000+</h3>
-              <span>Happy Customers</span>
-            </div>
-         </div>
-
-
-      </div> -->

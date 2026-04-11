@@ -8,8 +8,8 @@ export class AuthService {
   private http   = inject(HttpClient);
   private router = inject(Router);
 
-   private apiUrl = 'https://localhost:44394';
-  // private apiUrl = 'http://localhost:5220';
+  //  private apiUrl = 'https://localhost:44394';
+  private apiUrl = 'http://localhost:5220';
 
   private currentUser$ = new BehaviorSubject<any>(this.getUser());
 
