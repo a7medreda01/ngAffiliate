@@ -11,16 +11,23 @@ export class WishlistService {
   wishlistIds   = signal<Set<number>>(new Set());
 
   getWishlist() {
-    return this.http.get<any[]>(`${this.api}Wishlist`);
-  }
+  return this.http.get<any[]>(`${this.api}Wishlist`);
+}
 
-  addToWishlist(productId: number) {
-    return this.http.post<any>(`${this.api}Wishlist`, { productId });
-  }
+ addToWishlist(productId: number) {
+  return this.http.post(
+    `${this.api}Wishlist`,
+    { productId },
+    { responseType: 'text' } // ← ضيف
+  );
+}
 
   removeFromWishlist(productId: number) {
-    return this.http.delete<any>(`${this.api}Wishlist/${productId}`);
-  }
+  return this.http.delete(
+    `${this.api}Wishlist/${productId}`,
+    { responseType: 'text' } // ← ضيف
+  );
+}
 
   toggleWishlist(productId: number) {
     if (this.wishlistIds().has(productId)) {

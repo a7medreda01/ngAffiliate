@@ -1,217 +1,241 @@
-<div class="container my-5 " *ngIf="product">
-  <div class="row">
 
-    <!-- 🔹 Column 1 (Thumbnails) -->
-    <div class="col-md-2  gap-3 thumbnails">
-      <img *ngFor="let img of product.images" [src]="img" class="thumb" [class.active]="img === selectedImage"
-        (click)="selectImage(img)">
+<div class="container my-5">
+
+  <!-- Loading -->
+  @if (isLoading) {
+    <div class="text-center py-5">
+      <div class="spinner-border text-primary" role="status"></div>
     </div>
+  }
 
-    <!-- 🔹 Column 2 (Main Image) -->
-    <div class="col-md-5 text-center main-img-div">
-      <img [src]="selectedImage || product.images?.[0] || ''" class="main-img img-fluid">
-    </div>
+  <!-- Error -->
+  @if (errorMsg) {
+    <div class="alert alert-danger">{{ errorMsg }}</div>
+  }
 
-    <!-- 🔹 Column 3 (Details) -->
-    <div class="col-md-4 ms-md-1 ms-lg-4 ">
+  <div *ngIf="product">
+    <div class="row">
 
-      <!-- Title -->
-      <h4 class="fw-bold mt-3">{{product.name}}</h4>
+      <!-- Thumbnails -->
+      <div class="col-md-2 gap-3 thumbnails">
+        <img *ngFor="let img of product.images"
+             [src]="img"
+             class="thumb"
+             [class.active]="img === selectedImage"
+             (click)="selectImage(img)">
+      </div>
 
-      <div class="d-flex">
+      <!-- Main Image -->
+      <div class="col-md-5 text-center main-img-div">
+        <img [src]="selectedImage" class="main-img img-fluid">
+      </div>
+
+      <!-- Details -->
+      <div class="col-md-4 ms-md-1 ms-lg-4">
+
+        <h4 class="fw-bold mt-3">{{ product.name }}</h4>
+
         <!-- Rating -->
-        <div class="rating text-warning ">
-
-          <!-- Full Stars -->
-          <i class="bi bi-star-fill" *ngFor="let star of fullStars"></i>
-
-          <!-- Half Star -->
-          <i class="bi bi-star-half" *ngIf="halfStar"></i>
-
-          <!-- Empty Stars -->
-          <i class="bi bi-star" *ngFor="let star of emptyStars"></i>
-        </div>
-        <p class="text-black-50 ms-2">{{product.rating}}/5</p>
-        <p class="text-black-50 ms-3">|</p>
-        @if((product.stockQuantity ?? 0) > 0){
-        <p class="text-success ms-3">In stock</p>
-        }
-        @if((product.stockQuantity ?? 0) == 0){
-        <p class="text-danger-emphasis ms-3">Out of Stock</p>
-        }
-      </div>
-
-      <!-- Price -->
-      <div class="d-flex gap-2 align-content-center align-items-center">
-        <h4 class="fw-bold ">${{product.price}}</h4>
-        <h4 class="text-muted text-decoration-line-through ">${{product.oldPrice}}</h4>
-        <h6 class="rounded-pill p-2 py-1 text-danger bg-danger-subtle">-{{product.sale}}%</h6>
-      </div>
-      <!-- Description -->
-      <p class="text-muted mt-3">
-        {{product.description}}
-      </p>
-
-      <hr>
-
-      <!-- Colors -->
-      <div class="  d-flex flex-column">
-        <strong>Select Colors</strong>
-        <div class="d-inline">
-          <span *ngFor="let c of colors" class="color-box ms-1 my-2" [ngClass]="c" [class.active]="selectedColor === c"
-            (click)="selectedColor = c">
-          </span>
-        </div>
-      </div>
-      <hr>
-      <!-- Sizes -->
-      <div class="mb-3 d-flex flex-column">
-        <strong>Choose Size</strong>
-        <div class="d-inline">
-          <button *ngFor="let s of sizes" class="btn btn-sm m-1 rounded-pill border-0 size-btn px-3"
-            [ngClass]="selectedSize === s ? 'text-light bg-dark' : 'btn-outline-secondary'" (click)="selectedSize = s">
-            {{s}}
-          </button>
-        </div>
-      </div>
-
-      <!-- Quantity + Buttons -->
-      <div class="d-flex align-items-center gap-3 mb-3">
-
-        <div class="qty-box d-flex">
-          <button class="btn btn-light" (click)="decrease()">-</button>
-          <span class="px-3 d-flex align-items-center">{{product.quantity}}</span>
-          <button class="btn btn-light btn-increase text-light" (click)="increase()">+</button>
+        <div class="d-flex align-items-center gap-2">
+          <div class="rating text-warning">
+            <i class="bi bi-star-fill" *ngFor="let s of fullStars"></i>
+            <i class="bi bi-star-half"  *ngIf="halfStar"></i>
+            <i class="bi bi-star"       *ngFor="let s of emptyStars"></i>
+          </div>
+          <p class="text-muted mb-0">({{ product.reviews?.length ?? 0 }} reviews)</p>
+          <span class="text-muted">|</span>
+          @if ((product.stock ?? 0) > 0) {
+            <p class="text-success mb-0">In stock</p>
+          } @else {
+            <p class="text-danger mb-0">Out of Stock</p>
+          }
         </div>
 
-        <button class="btn buy-btn px-4 w-50">Buy Now</button>
-
-        <button class="btn btn-outline-dark">
-          <i class="bi bi-heart"></i>
-        </button>
-      </div>
-
-      <!-- Delivery -->
-      <div class="delivery-box mb-2 d-flex align-items-center ">
-        <i class="bi bi-truck"></i>
-        <div>
-          <h6>Free Delivery </h6>
-          <small>Enter your postal code for Delivery Availability</small>
+        <!-- Price -->
+        <div class="d-flex gap-2 align-items-center mt-2">
+          <h4 class="fw-bold">${{ product.price }}</h4>
         </div>
-      </div>
-      <!-- Delivery -->
-      <div class="delivery-box mb-2 d-flex align-items-center">
-        <i class="bi bi-arrow-repeat"></i>
-        <div>
-          <h6>Return Delivery </h6>
-          <small>Free 30 Days Delivery Returns</small>
-        </div>
-      </div>
 
-    </div>
+        <!-- Description -->
+        <p class="text-muted mt-3">{{ product.description }}</p>
+
+        <hr>
+
+        <!-- Quantity + Buttons -->
+<div class="d-flex align-items-center gap-3 mb-3">
+  <div class="qty-box d-flex">
+    <button class="btn btn-light" (click)="decrease()">-</button>
+    <span class="px-3 d-flex align-items-center">{{ quantity }}</span>
+    <button class="btn btn-light btn-increase" (click)="increase()">+</button>
   </div>
 
+  <!-- Buy Now → Add to Cart -->
+  <button class="btn buy-btn px-4 w-50"
+          (click)="addToCart()"
+          [disabled]="cartLoading">
+    {{ cartLoading ? 'Adding...' : 'Buy Now' }}
+  </button>
 
+  <!-- Wishlist -->
+  <button class="btn btn-outline-dark"
+          (click)="addToWishlist()"
+          [disabled]="wishlistLoading">
+    <i class="bi" [class.bi-heart]="!wishlistLoading"
+                  [class.bi-heart-fill]="wishlistLoading"></i>
+  </button>
+</div>
 
-  <!-- ///dtails  -->
-  <ul class="nav nav-pills col-12 mt-5">
-    <li class="nav-item col-4">
-      <button class=" nav-link-btn active " data-bs-toggle="pill" data-bs-target="#details">Details</button>
-    </li>
-    <li class="nav-item col-4">
-      <button class="nav-link-btn  " data-bs-toggle="pill" data-bs-target="#reviews">Reviews</button>
-    </li>
-    <li class="nav-item col-4">
-      <button class="nav-link-btn" data-bs-toggle="pill" data-bs-target="#faqs">FAQs</button>
-    </li>
-  </ul>
-
-  <div class="tab-content mt-3">
-    <!-- details  -->
-    <div class="tab-pane fade show active" id="details">
-      <div class="m-lg-4 m-1">
-        <ul>
-          <li *ngFor="let item of specsArray">
-            {{ item }}.
-          </li>
-        </ul>
-      </div>
-
-    </div>
-
-    <!-- reviews  -->
-    <div class="tab-pane fade" id="reviews">
-      <div class="d-flex justify-content-between align-items-center mx-5 my-3">
-        <!-- Title + Count -->
-        <div class="d-flex gap-2 align-items-center">
-          <h5 class="mb-0">All Reviews</h5>
-          <h6 class="text-muted mb-0">({{product.reviews?.length ?? 0}})</h6>
-        </div>
-
-        <!-- Buttons -->
-        <div class="d-flex gap-2 align-items-center">
-          <!-- Filter button -->
-          <button class="btn bg-dark-subtle rounded-pill d-none d-md-flex p-2">
-            <i class="bi bi-sliders2-vertical"></i>
-          </button>
-
-          <!-- Sort dropdown -->
-          <div class="dropdown">
-            <button class="btn bg-dark-subtle rounded-pill dropdown-toggle p-2" type="button" data-bs-toggle="dropdown">
-              Sort by
-            </button>
-            <ul class="dropdown-menu">
-              <li><a class="dropdown-item" href="#">Newest</a></li>
-              <li><a class="dropdown-item" href="#">Oldest</a></li>
-            </ul>
-          </div>
-
-          <!-- Write Review button -->
-          <button class="btn bg-black text-light rounded-pill d-none d-md-flex px-3 py-2">
-            Write a Review
-          </button>
-        </div>
-      </div>
-      <div class="m-lg-4 m-1">
-        <div class="d-flex flex-wrap justify-content-center gap-4 ">
-          <div *ngFor="let item of product.reviews" class="card col-md-5 p-3  col-10">
-
-            <!-- ⭐ Stars -->
-            <div class="mb-2">
-              <i *ngFor="let star of [1,2,3,4,5]" class="bi"
-                [ngClass]="star <= item.rating ? 'bi-star-fill text-warning' : 'bi-star text-muted'">
-              </i>
-            </div>
-
-            <!-- 👤 Name + Verified -->
-            <div class="fw-bold">
-              {{ item.userName }}
-              <i class="bi bi-patch-check-fill text-success ms-1"></i>
-            </div>
-
-            <!-- 💬 Comment -->
-            <div class="text-muted my-2">
-              {{ item.comment }}
-            </div>
-
-            <!-- 📅 Date -->
-            <div class="small text-secondary">
-              {{ item.createdAt | date:'mediumDate' }}
-            </div>
-
+<!-- Cart Messages -->
+@if (cartSuccess) {
+  <div class="alert alert-success py-1">{{ cartSuccess }}</div>
+}
+@if (cartError) {
+  <div class="alert alert-danger py-1">{{ cartError }}</div>
+}
+@if (wishlistSuccess) {
+  <div class="alert alert-success py-1">{{ wishlistSuccess }}</div>
+}
+        <!-- Delivery -->
+        <div class="delivery-box mb-2 d-flex align-items-center">
+          <i class="bi bi-truck me-2"></i>
+          <div>
+            <h6>Free Delivery</h6>
+            <small>Enter your postal code for Delivery Availability</small>
           </div>
         </div>
-        <div class="mt-4 d-flex justify-content-center">
-          <button class="btn border-1 border px-3 rounded-pill">Load more reviews</button>
-          <button class="btn bg-black text-light px-lg-3 p-0 rounded-pill d-md-none">Write a Review</button>
 
+        <div class="delivery-box mb-2 d-flex align-items-center">
+          <i class="bi bi-arrow-repeat me-2"></i>
+          <div>
+            <h6>Return Delivery</h6>
+            <small>Free 30 Days Delivery Returns</small>
+          </div>
         </div>
+
       </div>
     </div>
 
-    <!-- FAQs  -->
-    <div class="tab-pane fade" id="faqs">
-      <app-product-faqs></app-product-faqs>
+    <!-- Tabs -->
+    <ul class="nav nav-pills col-12 mt-5">
+      <li class="nav-item col-4">
+        <button class="nav-link-btn active" data-bs-toggle="pill" data-bs-target="#details">Details</button>
+      </li>
+      <li class="nav-item col-4">
+        <button class="nav-link-btn" data-bs-toggle="pill" data-bs-target="#reviews">Reviews</button>
+      </li>
+      <li class="nav-item col-4">
+        <button class="nav-link-btn" data-bs-toggle="pill" data-bs-target="#faqs">FAQs</button>
+      </li>
+    </ul>
+
+    <div class="tab-content mt-3">
+
+      <!-- Details Tab -->
+      <div class="tab-pane fade show active" id="details">
+        <div class="m-lg-4 m-1">
+          <ul>
+            <li *ngFor="let item of specsArray">{{ item }}.</li>
+          </ul>
+        </div>
+      </div>
+
+     <!-- Reviews Tab -->
+<div class="tab-pane fade" id="reviews">
+  <div class="d-flex justify-content-between align-items-center mx-5 my-3">
+    <div class="d-flex gap-2 align-items-center">
+      <h5 class="mb-0">All Reviews</h5>
+      <h6 class="text-muted mb-0">({{ product.reviews?.length ?? 0 }})</h6>
+    </div>
+
+    <button class="btn bg-black text-light rounded-pill px-3 py-2"
+            (click)="showReviewForm = !showReviewForm">
+      {{ showReviewForm ? 'Cancel' : 'Add Review' }}
+    </button>
+  </div>
+
+  <!-- Review Form -->
+  @if (showReviewForm) {
+    <div class="card p-4 mx-5 mb-4 shadow-sm">
+      <h6 class="mb-3">Write Your Review</h6>
+
+      <!-- Stars -->
+      <div class="mb-3">
+        <label class="form-label fw-bold">Rating</label>
+        <div class="d-flex gap-1">
+          @for (star of [1,2,3,4,5]; track star) {
+            <i class="bi fs-4"
+               [class.bi-star-fill]="star <= (hoveredStar || reviewRating)"
+               [class.bi-star]="star > (hoveredStar || reviewRating)"
+               style="color: #FFAD33; cursor: pointer"
+               (mouseenter)="setHovered(star)"
+               (mouseleave)="clearHover()"
+               (click)="setRating(star)">
+            </i>
+          }
+        </div>
+      </div>
+
+      <!-- Comment -->
+      <div class="mb-3">
+        <label class="form-label fw-bold">Comment</label>
+        <textarea class="form-control"
+                  rows="3"
+                  placeholder="Write your review here..."
+                  [(ngModel)]="reviewComment">
+        </textarea>
+      </div>
+      
+
+      <!-- Error/Success -->
+      @if (reviewError) {
+        <div class="alert alert-danger py-1">{{ reviewError }}</div>
+      }
+
+      <button class="btn btn-dark px-4"
+              (click)="submitReview()"
+              [disabled]="reviewLoading">
+        {{ reviewLoading ? 'Submitting...' : 'Submit Review' }}
+      </button>
+    </div>
+  }
+
+  <!-- Review Success -->
+  @if (reviewSuccess) {
+    <div class="alert alert-success mx-5">{{ reviewSuccess }}</div>
+  }
+
+  <!-- Reviews List -->
+  <div class="m-lg-4 m-1">
+    <div class="d-flex flex-wrap justify-content-center gap-4">
+      <div *ngFor="let item of product.reviews" class="card col-md-5 p-3 col-10">
+
+        <div class="mb-2">
+          <i *ngFor="let star of [1,2,3,4,5]" class="bi"
+             [ngClass]="star <= item.rating ? 'bi-star-fill text-warning' : 'bi-star text-muted'">
+          </i>
+        </div>
+
+        <div class="fw-bold">
+          Affiliate #{{ item.affiliateId }}
+          <i class="bi bi-patch-check-fill text-success ms-1"></i>
+        </div>
+
+        <div class="text-muted my-2">{{ item.comment }}</div>
+
+        <div class="small text-secondary">
+          {{ item.createdAt | date:'mediumDate' }}
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+      <!-- FAQs Tab -->
+      <div class="tab-pane fade" id="faqs">
+        <app-product-faqs></app-product-faqs>
+      </div>
+
     </div>
   </div>
 

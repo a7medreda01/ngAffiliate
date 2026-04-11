@@ -15,9 +15,10 @@ export class Wishlist implements OnInit {
   private wishlistService = inject(WishlistService);
   private router          = inject(Router);
 
-  products:    any[] = [];
-  isLoading          = false;
-  errorMsg           = '';
+  products:  any[] = [];
+  isLoading        = false;
+  errorMsg         = '';
+  successMsg       = '';
 
   ngOnInit(): void {
     this.loadWishlist();
@@ -25,9 +26,15 @@ export class Wishlist implements OnInit {
 
   loadWishlist(): void {
     this.isLoading = true;
+    this.errorMsg  = '';
+
     this.wishlistService.getWishlist().subscribe({
       next: (res) => {
-        this.products = Array.isArray(res) ? res : [];;
+        // الـ API بترجع array فيها imageUrl مباشرة
+        this.products = (Array.isArray(res) ? res : []).map(p => ({
+          ...p,
+          imageUrl: p.imageUrl || p.images?.[0] || 'assets/images/placeholder.png'
+        }));
         this.wishlistService.updateSignals(this.products);
         this.isLoading = false;
       },
@@ -38,27 +45,27 @@ export class Wishlist implements OnInit {
     });
   }
 
- // في removeFromWishlist غيّر
-removeFromWishlist(productId: number): void {
-  this.wishlistService.removeFromWishlist(productId).subscribe({
-    next: () => {
-      // ← productId أو id حسب الـ API response
-      this.products = this.products.filter(
-        p => (p.productId || p.id) !== productId
-      );
-      this.wishlistService.updateSignals(this.products);
-    },
-    error: (err) => {
-      this.errorMsg = err.error?.message || 'Failed to remove item';
-    }
-  });
+  removeFromWishlist(productId: number): void {
+    this.errorMsg   = '';
+    this.successMsg = '';
+
+    this.wishlistService.removeFromWishlist(productId).subscribe({
+      next: () => {
+        this.products = this.products.filter(
+          p => (p.productId || p.id) !== productId
+        );
+        this.wishlistService.updateSignals(this.products);
+        this.successMsg = 'Item removed successfully';
+        setTimeout(() => this.successMsg = '', 3000);
+      },
+      error: (err) => {
+        this.errorMsg = err.error?.message || 'Failed to remove item';
+      }
+    });
   }
 
   moveAllToBag(): void {
-    // لو عندك endpoint ليها
-    // this.http.post('/api/Wishlist/moveAll', {})
-    // دلوقتي هتنقلهم يدوياً للكارت واحد واحد
-    this.router.navigate(['/cart']);
+    this.router.navigate(['/affiliate/cart']);
   }
 
   getStars(rating: number): number[] {

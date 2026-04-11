@@ -8,83 +8,77 @@
     </button>
   </div>
 
-  <!-- Loading -->
+  @if (successMsg) {
+    <div class="alert alert-success">{{ successMsg }}</div>
+  }
+  @if (errorMsg) {
+    <div class="alert alert-danger">{{ errorMsg }}</div>
+  }
+
   @if (isLoading) {
     <div class="text-center py-5">
       <div class="spinner-border" role="status"></div>
     </div>
   }
 
-  <!-- Error -->
-  @if (errorMsg) {
-    <div class="alert alert-danger">{{ errorMsg }}</div>
-  }
-
-  <!-- Empty -->
   @if (!isLoading && products.length === 0) {
     <div class="text-center py-5">
       <p class="text-muted">Your wishlist is empty</p>
-      <a routerLink="/home" class="btn btn-dark mt-2">Go Shopping</a>
+      <a [routerLink]="['/affiliate/home']" class="btn btn-dark mt-2">
+        Go Shopping
+      </a>
     </div>
   }
 
-  <!-- Products Grid -->
-  <div class="row g-4">
-    @for (product of products; track product.id) {
-      <div class="col-6 col-md-4 col-lg-3">
-        <div class="product-card position-relative">
+  @if (!isLoading && products.length > 0) {
+    <div class="row g-4">
+      @for (product of products; track product.productId || product.id) {
+        <div class="col-6 col-md-4 col-lg-3">
+          <div class="product-card">
 
-          <!-- Image Container -->
-          <div class="img-container position-relative">
+            <div class="img-container">
 
-            <!-- Sale Badge -->
-            @if (product.discountPercentage || product.sale) {
-              <span class="sale-badge">
-                -{{ product.discountPercentage || product.sale }}%
-              </span>
-            }
-
-            <!-- Delete Button -->
-            <button
-              class="delete-btn"
-              (click)="removeFromWishlist(product.productId || product.id)">
-              <i class="bi bi-trash"></i>
-            </button>
-
-            <!-- Product Image -->
-            <img
-              [src]="product.imageUrl || product.image || 'assets/images/placeholder.png'"
-              [alt]="product.name"
-              class="product-img"
-              [routerLink]="['/product', product.productId || product.id]"
-            />
-
-            <!-- Add To Cart Overlay -->
-            <button class="add-to-cart-btn">
-              <i class="bi bi-cart2 me-2"></i>Add To Cart
-            </button>
-
-          </div>
-
-          <!-- Product Info -->
-          <div class="product-info mt-2">
-            <h6 class="product-name">{{ product.name }}</h6>
-            <div class="d-flex gap-2 align-items-center">
-              <span class="price">${{ product.price }}</span>
-              @if (product.oldPrice || product.originalPrice) {
-                <span class="old-price">
-                  ${{ product.oldPrice || product.originalPrice }}
-                </span>
+              <!-- Sale Badge -->
+              @if (product.discountPercentage) {
+                <span class="sale-badge">-{{ product.discountPercentage }}%</span>
               }
+
+              <!-- Delete -->
+              <button class="delete-btn"
+                      (click)="removeFromWishlist(product.productId || product.id)">
+                <i class="bi bi-trash"></i>
+              </button>
+
+              <!-- Image -->
+              <img [src]="product.imageUrl || 'assets/images/placeholder.png'"
+                   [alt]="product.name"
+                   class="product-img"
+                   [routerLink]="['/affiliate/product', product.productId || product.id]"/>
+
+              <!-- Add To Cart -->
+              <button class="add-to-cart-btn">
+                <i class="bi bi-cart2 me-2"></i>Add To Cart
+              </button>
+
             </div>
+
+            <!-- Info -->
+            <div class="product-info mt-2">
+              <h6 class="product-name">{{ product.name }}</h6>
+              <div class="d-flex gap-2 align-items-center">
+                <span class="price">${{ product.price }}</span>
+                @if (product.oldPrice) {
+                  <span class="old-price">${{ product.oldPrice }}</span>
+                }
+              </div>
+            </div>
+
           </div>
-
         </div>
-      </div>
-    }
-  </div>
+      }
+    </div>
+  }
 
-  <!-- Just For You -->
   <div class="mt-5">
     <app-just-for-you />
   </div>

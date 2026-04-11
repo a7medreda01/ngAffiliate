@@ -91,11 +91,10 @@ onSubmit(): void {
   };
 
   this.authService.register(data).subscribe({
-  next: () => {
-    this.isLoading = false;
-    // الـ register غالباً مش بيرجع token → روّح للـ login
-    this.router.navigate(['/login']);
-  },
+next: () => {
+  this.isLoading = false;
+  this.router.navigate(['/login']);
+},
   error: (err) => {
       if (err.status === 400) {
     // لو في errors array

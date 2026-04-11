@@ -2,14 +2,15 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
+import { jwtDecode } from 'jwt-decode';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private http   = inject(HttpClient);
   private router = inject(Router);
 
-  //  private apiUrl = 'https://localhost:44394';
-  private apiUrl = 'http://localhost:5220';
+   private apiUrl = 'https://localhost:44394';
+  //private apiUrl = 'http://localhost:5220';
 
   private currentUser$ = new BehaviorSubject<any>(this.getUser());
 
@@ -23,25 +24,6 @@ export class AuthService {
     );
   }
 
-  // ─── Register ─────────────────────────────────────────
-  // لو role = 'trader'   → register-merchant
-  // لو role = 'marketer' → register-affiliate
-  // register(data: any): Observable<any> {
-    
-  //   const endpoint = data.role === 'trader'
-  //     ? '/api/Auth/register-merchant'
-  //     : '/api/Auth/register-affiliate';
-
-  //     const {role, ...body } = data;
-
-  //   return this.http.post(`${this.apiUrl}${endpoint}`, body).pipe(
-  //     tap((res: any) => {
-  //     if (res?.data?.token) {
-  //   this.saveSession(res.data.token, res.data);
-  //       }  
-  //     })
-  //   );
-  // }
 register(data: any): Observable<any> {
   const endpoint = data.role === 'trader'
     ? '/api/Auth/register-merchant'
@@ -89,6 +71,22 @@ register(data: any): Observable<any> {
     localStorage.setItem('user', JSON.stringify(user));
     this.currentUser$.next(user);
   }
+  getRole(): string | null {
+  const token = this.getToken();
+  if (!token) return null;
+  const decoded: any = jwtDecode(token);
+  return decoded['role'] ||
+         decoded['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'] ||
+         null;
+}
+
+isMerchant(): boolean {
+  return this.getRole() === 'Merchant';
+}
+
+isAffiliate(): boolean {
+  return this.getRole() === 'Affiliate';
+}
 }
 
 

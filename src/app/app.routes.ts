@@ -2,7 +2,7 @@ import { Routes } from '@angular/router';
 import { MainLayout } from './layouts/main-layout/main-layout';
 import { Home } from './features/home/home/home';
 import { Login } from './features/auth/login/login';
-import { authGuard, guestGuard } from './guards/auth-guard';
+import { affiliateGuard, authGuard, guestGuard, merchantGuard } from './guards/auth-guard';
 import { Register } from './features/auth/register/register';
 import { NotFound } from './features/not-found/not-found';
 import { Product } from './features/product/product/product';
@@ -14,33 +14,65 @@ import { Wishlist } from './features/wishlist/wishlist/wishlist';
 import { Checkout } from './features/checkout/checkout';
 import { OrderDetails } from './features/account/my-orders/order-details/order-details';
 import { CartComponent } from './pages/cart/cart';
+
 export const routes: Routes = [
-  {
-    path: '',
-    component: MainLayout,
-    children: [
-      { path: 'home', component: Home, canActivate: [authGuard] },
-      { path: '', redirectTo: 'home', pathMatch: 'full' }
-    ]
-  },
-  { path: 'product/:id', component: Product },
+  // ─── Guest Only ───────────────────────────────
   { path: 'login', component: Login, canActivate: [guestGuard] },
   { path: 'register', component: Register, canActivate: [guestGuard] },
+
+  // ─── Affiliate Only ───────────────────────────
   {
-    path: 'account',
-    component: Account,
+    path: 'affiliate',
+    canActivate: [affiliateGuard],
     children: [
-      { path: '', redirectTo: 'edit', pathMatch: 'full' },
-      { path: 'edit', component: EditProfile },
-      { path: 'payment', component: PaymentOptions },
-      { path: 'my-orders', component: MyOrders },
-      { path: 'order-details/:id', component: OrderDetails }
+      {
+        path: 'home',
+        component: MainLayout,
+        children: [
+          { path: '', component: Home },
+        ]
+      },
+      { path: 'product/:id', component: Product },
+      { path: 'cart', component: CartComponent },
+      { path: 'wishlist', component: Wishlist },
+      { path: 'checkout', component: Checkout },
+      {
+        path: 'account',
+        component: Account,
+        children: [
+          { path: '', redirectTo: 'edit', pathMatch: 'full' },
+          { path: 'edit', component: EditProfile },
+          { path: 'payment', component: PaymentOptions },
+          { path: 'my-orders', component: MyOrders },
+          { path: 'order-details/:id', component: OrderDetails }
+        ]
+      },
     ]
   },
-  { path: 'cart', component: CartComponent },
-  { path: 'wishlist', component: Wishlist },
-  { path: 'checkout', component: Checkout },
-  { path: '**', component: NotFound }
 
+  // ─── Merchant Only ────────────────────────────
+  {
+  path: 'merchant',
+  canActivate: [merchantGuard],
+  children: [
+    {
+      path: 'home',
+      component: MainLayout,
+      children: [{ path: '', component: Home }]
+    },
+    {
+      path: 'account',
+      component: Account,
+      children: [
+        { path: '', redirectTo: 'edit', pathMatch: 'full' },
+        { path: 'edit', component: EditProfile }, 
+      ]
+    },
+  ]
+},
+
+  // ─── Fallback ─────────────────────────────────
+  { path: '', redirectTo: '/login', pathMatch: 'full' },
+  { path: '**', component: NotFound }
 ];
 

@@ -119,15 +119,18 @@ export class ProductService {
 
   products!: Product[];
 
-  getProductById(id: number): Observable<Product | undefined> {
-    return of(this.products.find(p => p.id === id));
+ getProducts(type?: string): Observable<any[]> {
+    let params = new HttpParams();
+    if (type) params = params.set('Type', type);
+    return this.http.get<any[]>(`${environment.baseUrl}products`, { params });
   }
 
-  getProducts(type?: string): Observable<any> {
-    let params = new HttpParams();
-    if (type) {
-      params = params.set('Type', type);
-    }
-   return this.http.get(`${environment.baseUrl}products`, { params });
+  // ✅ جيب منتج بالـ ID من الـ API
+  getProductById(id: number): Observable<any> {
+    return this.http.get<any>(`${environment.baseUrl}products/${id}`);
+  }
+
+  getCategories(): Observable<any[]> {
+    return this.http.get<any[]>(`${environment.baseUrl}categories`);
   }
 }
