@@ -1,3 +1,4 @@
+<!--  
  <section class="testimonial py-5 bg-light">
         <div class="container">
             <h2 class="text-center mb-5 card-title">What Our Clients Say</h2>
@@ -12,7 +13,6 @@
                                 <i class="bi bi-star-fill"></i>
                                 <i class="bi bi-star"></i>
                             </div>
-                            <!-- <img src="https://randomuser.me/api/portraits/men/43.jpg" class="rounded-circle mb-3" alt="Client Avatar"> -->
                             <div class="card-inside-card">
                                Alex K.
                                 <span class="badge">✔</span>
@@ -33,7 +33,6 @@
                                 <i class="bi bi-star-fill"></i>
                                 <i class="bi bi-star"></i>
                             </div>
-                            <!-- <img src="https://randomuser.me/api/portraits/men/43.jpg" class="rounded-circle mb-3" alt="Client Avatar"> -->
                             <div class="card-inside-card">
                                Mike Johnson
                                 <span class="badge">✔</span>
@@ -54,7 +53,6 @@
                                 <i class="bi bi-star-fill"></i>
                                 <i class="bi bi-star"></i>
                             </div>
-                            <!-- <img src="https://randomuser.me/api/portraits/men/43.jpg" class="rounded-circle mb-3" alt="Client Avatar"> -->
                             <div class="card-inside-card">
                                Mike Johnson
                                 <span class="badge">✔</span>
@@ -67,4 +65,38 @@
                 </div>
             </div>
         </div>
-    </section>
+    </section> -->
+    
+
+    <section class="testimonial py-5 bg-light">
+  <div class="container">
+    <h2 class="text-center mb-5 card-title">What Our Clients Say</h2>
+    <div class="row">
+      <div class="col-md-4 mb-4" *ngFor="let review of reviews">
+        <div class="card">
+          <div class="card-body text-left">
+
+            <!-- Stars -->
+            <div class="text-warning mb-3">
+              <ng-container *ngFor="let s of getStars(review.rating); let i = index">
+                <i class="bi bi-star-fill" *ngIf="i + 1 <= review.rating"></i>
+                <i class="bi bi-star-half" *ngIf="i + 0.5 === review.rating"></i>
+                <i class="bi bi-star"      *ngIf="i + 1 > review.rating && i + 0.5 !== review.rating"></i>
+              </ng-container>
+            </div>
+
+            <!-- Name -->
+            <div class="card-inside-card">
+              Customer #{{ review.affiliateId }}
+              <span class="badge">✔</span>
+            </div>
+
+            <!-- Comment -->
+            <p class="card-text">"{{ review.comment }}"</p>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
