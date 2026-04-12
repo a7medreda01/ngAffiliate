@@ -37,10 +37,13 @@ export class Login {
     this.errorMessage = '';
  
 this.authService.login(this.loginForm.value).subscribe({
-  next: () => {
-    this.isLoading = false;
-    this.router.navigate(['/home']); // ← هنا
-  },
+next: (res) => {
+  this.isLoading = false;
+  const role = this.authService.getRole();
+  if (role === 'Merchant')  this.router.navigate(['/merchant/home']);
+  if (role === 'Affiliate') this.router.navigate(['/affiliate/home']);
+
+},
   error: (err) => {
     this.errorMessage = err.error?.message || 'Email or password is incorrect';
     this.isLoading = false;

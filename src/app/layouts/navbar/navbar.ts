@@ -1,42 +1,53 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Component, OnInit } from '@angular/core';
+import { Router, RouterLink } from '@angular/router';
+import { AuthService } from '../../services/auth/auth';
 
 @Component({
   selector: 'app-navbar',
-  imports: [CommonModule,RouterLink],
+  imports: [CommonModule, RouterLink],
   templateUrl: './navbar.html',
   styleUrl: './navbar.css',
 })
-export class Navbar {
+export class Navbar implements OnInit {
 
+  wishLength: number = 5;
+  cartLength: number = 3;
+  topText: string = "Summer Sale For All Swim And Free Express Delivery - OFF 50%!";
+  showSearch = false;
 
-//from service of backend later
-wishLength: number=5;
-cartLength: number=3;
+  isAffiliate = false;
+  isMerchant  = false;
 
-//to header text
-topText :string= "Summer Sale For All Swim And Free Express Delivery - OFF 50%! ";
+  // الـ links بتتغير حسب الـ role
+  homeLink    = '/affiliate/home';
+  wishlistLink = '/affiliate/wishlist';
+  cartLink    = '/affiliate/cart';
+  accountLink = '/affiliate/account';
+  ordersLink  = '/affiliate/account/my-orders';
+  paymentLink = '/affiliate/account/payment';
 
-//options language
-selectedOption: string = '';
-options = ['English', 'عربي'];
+  constructor(
+    private authService: AuthService,
+    private router: Router
+  ) {}
 
-select(option: string) {
-  this.selectedOption = option;
-}
+  ngOnInit(): void {
+    const role = this.authService.getRole();
+    this.isAffiliate = role === 'Affiliate';
+    this.isMerchant  = role === 'Merchant';
 
-logout() {
-  console.log('User logged out');
-  localStorage.removeItem('token');
-  // Redirect to home page أو login
-}
+    if (this.isMerchant) {
+      this.homeLink    = '/merchant/home';
+      this.accountLink = '/merchant/account';
+    }
+  }
 
+  toggleSearch() {
+    this.showSearch = !this.showSearch;
+  }
 
-showSearch = false;
-
-toggleSearch() {
-  this.showSearch = !this.showSearch;
-}
-
+  logout() {
+    this.authService.logout();
+  }
 }

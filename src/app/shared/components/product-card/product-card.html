@@ -1,9 +1,11 @@
 <div class="card product-card border-0 shadow-sm">
 
-  <!-- Image + overlay -->
   <div class="position-relative overflow-hidden">
 
-    <img [src]="product.imageUrl" [routerLink]="['/product', product.id]" class="card-img-top" alt="product" >
+    <img [src]="product.images?.[0]"
+         [routerLink]="['/affiliate/product', product.id]"
+         class="card-img-top"
+         alt="product">
 
     <!-- Icons -->
     <div class="icons position-absolute top-0 end-0 p-2 d-flex flex-column">
@@ -11,15 +13,7 @@
       <a href="#" class="icon-btn"><i class="bi bi-eye"></i></a>
     </div>
 
-    <!-- sale  -->
-    @if(product.oldPrice > product.price ){
-    <div class="sale-amount">
-      <p>-{{((product.oldPrice - product.price) / product.oldPrice * 100) | number:'1.0-0' }}%</p>
-    </div>
-    }
-
-
-    <!-- Add to cart (hidden يظهر hover) -->
+    <!-- Add to cart -->
     <div class="overlay d-flex justify-content-center align-items-center">
       <button class="btn btn-dark w-100">Add to Cart</button>
     </div>
@@ -27,29 +21,29 @@
   </div>
 
   <!-- Content -->
-  <div class="card-body text-center" [routerLink]="['/product', product.id]">
+  <div class="card-body text-center"
+       [routerLink]="['/affiliate/product', product.id]">
+
     <h6 class="card-title">{{ product.name }}</h6>
 
     <div class="price mb-2">
-      <span class=" product-price me-2">{{ product.price }}$</span>
-      <span class="text-muted text-decoration-line-through">
-        {{ product.oldPrice }}$
-      </span>
+      <span class="product-price me-2">${{ product.price }}</span>
     </div>
 
     <!-- Rating -->
     <div class="rating text-warning">
-
-      <!-- Full Stars -->
-      <i class="bi bi-star-fill" *ngFor="let star of fullStars"></i>
-
-      <!-- Half Star -->
+      <i class="bi bi-star-fill" *ngFor="let s of fullStars"></i>
       <i class="bi bi-star-half" *ngIf="halfStar"></i>
-
-      <!-- Empty Stars -->
-      <i class="bi bi-star" *ngFor="let star of emptyStars"></i>
-
+      <i class="bi bi-star"      *ngFor="let s of emptyStars"></i>
     </div>
+
+    <small class="text-muted">
+      ({{ product.reviews?.length ?? 0 }} reviews)
+    </small>
+
   </div>
 
 </div>
+
+  
+  

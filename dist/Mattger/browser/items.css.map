@@ -1,7 +1,0 @@
-{
-  "version": 3,
-  "sources": ["src/app/features/wishlist/items/items.css"],
-  "sourcesContent": [".btn-move{\r\n    transition: .5s ease-in;\r\n}\r\n.btn-move:hover{\r\n    transform: scale(1.06);\r\n    color: white;\r\n    background-color: var(--primary-color);\r\n}"],
-  "mappings": ";AAAA,CAAC;AACG,cAAY,IAAI;AACpB;AACA,CAHC,QAGQ;AACL,aAAW,MAAM;AACjB,SAAO;AACP,oBAAkB,IAAI;AAC1B;",
-  "names": []
-}

@@ -1,7 +1,0 @@
-{
-  "version": 3,
-  "sources": ["src/app/features/account/sidebar/sidebar.css"],
-  "sourcesContent": [".links{\r\n    margin-left: 20px;\r\n    display: flex;\r\n    flex-direction: row;\r\n    margin-top: 15px;\r\n    margin-bottom: 20px;\r\n}\r\n.link-mav{\r\n    text-decoration: none;\r\n    color: gray;\r\n    padding: 4px;\r\n}\r\n\r\n\r\n\r\n.link-mav.active {\r\n  color: var(--primary-color) !important;\r\n}"],
-  "mappings": ";AAAA,CAAC;AACG,eAAa;AACb,WAAS;AACT,kBAAgB;AAChB,cAAY;AACZ,iBAAe;AACnB;AACA,CAAC;AACG,mBAAiB;AACjB,SAAO;AACP,WAAS;AACb;AAIA,CARC,QAQQ,CAAC;AACR,SAAO,IAAI;AACb;",
-  "names": []
-}

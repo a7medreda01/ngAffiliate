@@ -1,7 +1,0 @@
-{
-  "version": 3,
-  "sources": ["src/app/features/wishlist/just-for-you/just-for-you.css"],
-  "sourcesContent": [".view-all-btn{\r\n  width: 140px;\r\n  height: 40px;\r\n  background-color: var(--primary-color);\r\n  color: white;\r\n  transition: .5s ease;\r\n}\r\n.view-all-btn:hover{\r\n  border: 1px solid gray;\r\n  background-color: white;\r\n  color: black;\r\n}\r\n.before-div{\r\n  background-color: var(--primary-color);\r\n}\r\n.title-div{\r\n  color: var(--primary-color);\r\n}"],
-  "mappings": ";AAAA,CAAC;AACC,SAAO;AACP,UAAQ;AACR,oBAAkB,IAAI;AACtB,SAAO;AACP,cAAY,IAAI;AAClB;AACA,CAPC,YAOY;AACX,UAAQ,IAAI,MAAM;AAClB,oBAAkB;AAClB,SAAO;AACT;AACA,CAAC;AACC,oBAAkB,IAAI;AACxB;AACA,CAAC;AACC,SAAO,IAAI;AACb;",
-  "names": []
-}

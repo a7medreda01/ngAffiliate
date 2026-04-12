@@ -1,7 +1,0 @@
-{
-  "version": 3,
-  "sources": ["src/app/features/account/edit-profile/edit-profile.css"],
-  "sourcesContent": ["\r\n.edit{\r\n    color: var(--primary-color);\r\n}\r\n.form-input {\r\n    height: 50px;\r\n    background-color: #f5f5f5;\r\n    border: none;\r\n    border-radius: 5px;\r\n\r\n}\r\n\r\n.form-input label {\r\n    color: gray;\r\n}\r\n\r\n#save-changes-btn {\r\n    width: 200px;\r\n    background-color: var(--primary-color);\r\n    color: white;\r\n    padding: 15px;\r\n}"],
-  "mappings": ";AACA,CAAC;AACG,SAAO,IAAI;AACf;AACA,CAAC;AACG,UAAQ;AACR,oBAAkB;AAClB,UAAQ;AACR,iBAAe;AAEnB;AAEA,CARC,WAQW;AACR,SAAO;AACX;AAEA,CAAC;AACG,SAAO;AACP,oBAAkB,IAAI;AACtB,SAAO;AACP,WAAS;AACb;",
-  "names": []
-}

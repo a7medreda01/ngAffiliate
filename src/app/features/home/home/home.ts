@@ -1,6 +1,11 @@
+<<<<<<< HEAD
 import { Component } from '@angular/core';
 import { ProductService } from '../../../services/product/product';
 import { Product } from '../../../models/product';
+=======
+import { Component, OnInit } from '@angular/core';
+import { ProductService } from '../../../services/product/product-service';
+>>>>>>> 0a46da4048b0f3ffac5edf89007655a5df6acc70
 import { FourProduct } from '../../../shared/components/four-product/four-product';
 import { Hero } from '../components/hero/hero';
 import { Cartcollection } from '../components/cartcollection/cartcollection';
@@ -9,27 +14,49 @@ import { Dressstyle } from '../components/dressstyle/dressstyle';
 
 @Component({
   selector: 'app-home',
-  imports: [ Hero,Cartcollection,Cardreview,FourProduct,Dressstyle],
+  imports: [Hero, Cartcollection, Cardreview, FourProduct, Dressstyle],
   templateUrl: './home.html',
   styleUrl: './home.css',
 })
+export class Home implements OnInit {
 
-export class Home {
-products : any;
+  topProducts: any[] = [];
+  newProducts: any[] = [];
 
-constructor(private productService:ProductService){
-  this.getProducts()
-}
+  constructor(private productService: ProductService) {}
 
+  ngOnInit(): void {
+    this.loadTopProducts();
+    this.loadNewArrivals();
+  }
 
-getProducts(){
-  this.productService.getProducts().subscribe({
-    next:(res:any)=>{
-      this.products=res
-      console.log(this.products)
-    },
-    error:(error:any)=>console.log(error)
-  })
-}
+  loadTopProducts(): void {
+    this.productService.getProducts('top').subscribe({
+      next: (res: any) => {
+        this.topProducts = this.mapProducts(res);
+      },
+      error: (err) => console.error('Error loading top products:', err)
+    });
+  }
 
+  loadNewArrivals(): void {
+    this.productService.getProducts('new').subscribe({
+      next: (res: any) => {
+        this.newProducts = this.mapProducts(res);
+      },
+      error: (err) => console.error('Error loading new arrivals:', err)
+    });
+  }
+
+  // نحول الـ response للشكل اللي بيتوقعه product-card
+  mapProducts(products: any[]): any[] {
+    return products.map(p => ({
+      ...p,
+      imageUrl: p.images?.[0] ?? 'assets/placeholder.png',
+      oldPrice: p.oldPrice ?? null,
+      rating: p.reviews?.length
+        ? p.reviews.reduce((sum: number, r: any) => sum + r.rating, 0) / p.reviews.length
+        : 0
+    }));
+  }
 }
