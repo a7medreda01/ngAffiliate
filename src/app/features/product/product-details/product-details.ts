@@ -1,7 +1,7 @@
 import { CommonModule, NgClass } from '@angular/common';
 import { Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { ProductService } from '../../../services/product/product-service';
+import { ProductService } from '../../../services/product/product';
 import { Product } from '../../../models/product';
 import { NgModel } from '@angular/forms';
 import { ProductFaqs } from '../../../shared/components/product-faqs/product-faqs';
@@ -20,23 +20,25 @@ export class ProductDetails {
   ngOnInit() {
     const id = Number(this.route.snapshot.paramMap.get('id'));
 
-    // this.product=this.service.products[id-1]
-    //  this.specsText = this.product.details
+    this.service.getProductById(id).subscribe({
+      next: (p) => {
+        if (p) {
+          this.product = p;
+          this.specsText = this.product.details ?? '';
+          this.specsArray = this.specsText.split('.').filter(x => x.trim() !== '');
 
-    this.product=this.service.products[id-1]
-     this.specsText = this.product.details ?? ''
+          //rating
+          const full = Math.floor(this.product.rating);
+          const hasHalf = this.product.rating % 1 >= 0.5;
+          const empty = 5 - full - (hasHalf ? 1 : 0);
 
-    this.specsArray = this.specsText.split('.').filter(x => x.trim() !== '');
-    // this.GetProduct();
-
-    //ratineg
-    const full = Math.floor(this.product.rating);
-    const hasHalf = this.product.rating % 1 >= 0.5;
-    const empty = 5 - full - (hasHalf ? 1 : 0);
-
-    this.fullStars = Array(full);
-    this.halfStar = hasHalf;
-    this.emptyStars = Array(empty);
+          this.fullStars = Array(full);
+          this.halfStar = hasHalf;
+          this.emptyStars = Array(empty);
+        }
+      },
+      error: (err) => console.error(err)
+    });
 
   }
   getFullStars(rating: number): number[] {

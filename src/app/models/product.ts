@@ -23,20 +23,27 @@ export interface Product {
   reviews?: Review[];
   reviewsCount?: number;
   stockQuantity?: number;
+  stock?: number;
   category?: string; // أضفنا ? هنا لأنها ناقصة في الداتا الحالية
+  categoryId?: number;
+  categoryName?: string;
   brandName?: string;
   typeName?: string;
+  merchantName?: string;
   quantity?: number;
   sizes?: string[];
   color?: string;
   createdAt?: Date;
   isActive?: boolean;
+  status?: string;
 }
 
 export interface Category {
-  id: string;
+  id: number;
   name: string;
-  count: number;
+  slug: string;
+  createdAt?: Date;
+  count?: number; // اختياري - ممكن نحسبه في الفرونت
 }
 
 export interface FilterOptions {
@@ -44,6 +51,7 @@ export interface FilterOptions {
   minPrice: number;
   maxPrice: number;
   sortBy: 'popular' | 'price-low' | 'price-high' | 'newest';
+  search?: string;
 }
 
 export type SortOption = FilterOptions['sortBy'];

@@ -3,7 +3,7 @@ import { RouterLink } from '@angular/router';
 import { ProductDetails } from '../product-details/product-details';
 import { RelatedItem, } from '../related-item/related-item';
 import { FourProduct } from '../../../shared/components/four-product/four-product';
-import { ProductService } from '../../../services/product/product-service';
+import { ProductService } from '../../../services/product/product';
 
 
 @Component({

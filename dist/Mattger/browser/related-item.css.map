@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["src/app/features/product/related-item/related-item.css"],
+  "sourcesContent": ["\r\n/* //flash */\r\n\r\n.flash-sale {\r\n  /* background: #f8f9fa; */\r\n  border-radius: 10px;\r\n}\r\n\r\n \r\n \r\n.before-div{\r\n  background-color: var(--primary-color);;\r\n}\r\n.title-div{\r\n  color: var(--primary-color);\r\n}"],
+  "mappings": ";AAGA,CAAC;AAEC,iBAAe;AACjB;AAIA,CAAC;AACC,oBAAkB,IAAI;AACxB;AACA,CAAC;AACC,SAAO,IAAI;AACb;",
+  "names": []
+}

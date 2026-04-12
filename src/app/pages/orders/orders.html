@@ -1,0 +1,170 @@
+<div class="orders-page" (click)="closeMenu()">
+
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="header-left">
+      <h1>Order Management</h1>
+      <p class="header-sub">Track, process, and fulfill your customer requests.</p>
+    </div>
+    <button class="btn-create">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+      </svg>
+      Create New Order
+    </button>
+  </div>
+
+  <!-- Stat Cards -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <span class="stat-label">Total Revenue</span>
+      <span class="stat-value">${{ totalRevenue() | number:'1.0-0' }}</span>
+      <span class="stat-trend positive">↑ 12.4% from last month</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-label">Active Orders</span>
+      <span class="stat-value">{{ activeOrdersCount() }}</span>
+      <span class="stat-trend neutral">🕐 {{ activeOrdersCount() }} pending shipment</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-label">Average Value</span>
+      <span class="stat-value">${{ averageOrderValue() | number:'1.2-2' }}</span>
+      <span class="stat-trend negative">↓ 2.1% this week</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-label">Growth Target</span>
+      <div class="growth-bar-wrap">
+        <span class="stat-value growth-pct">84%</span>
+        <div class="growth-bar"><div class="growth-fill" style="width: 84%"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toolbar -->
+  <div class="toolbar">
+    <div class="status-tabs">
+      @for (tab of statusTabs; track tab.value) {
+        <button
+          class="tab"
+          [class.active]="activeStatus() === tab.value"
+          (click)="activeStatus.set(tab.value); $event.stopPropagation()">
+          {{ tab.label }}
+        </button>
+      }
+    </div>
+    <div class="toolbar-right">
+      <div class="search-wrap">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+        <input
+          type="text"
+          placeholder="Search orders, customers..."
+          [ngModel]="searchQuery()"
+          (ngModelChange)="searchQuery.set($event)" />
+      </div>
+      <button class="btn-outline">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>
+        </svg>
+        Advanced Filters
+      </button>
+      <button class="btn-outline">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
+        </svg>
+        Export CSV
+      </button>
+    </div>
+  </div>
+
+  <!-- Table -->
+  @if (loading()) {
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <span>Loading orders...</span>
+    </div>
+  } @else {
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>ORDER ID</th>
+            <th>CUSTOMER NAME</th>
+            <th>DATE</th>
+            <th>STATUS</th>
+            <th>TOTAL AMOUNT</th>
+            <th>ACTIONS</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (order of filteredOrders(); track order.id) {
+            <tr>
+              <td class="order-num">{{ order.orderNumber }}</td>
+              <td class="customer-cell">
+                <div class="avatar" [attr.data-initials]="getInitials(order.customer.name)">
+                  {{ getInitials(order.customer.name) }}
+                </div>
+                <div class="customer-info">
+                  <span class="customer-name">{{ order.customer.name }}</span>
+                  <span class="customer-email">{{ order.customer.email }}</span>
+                </div>
+              </td>
+              <td class="date-cell">{{ order.createdAt | date:'MMM d, yyyy' }}</td>
+              <td>
+                <span class="badge badge--{{ order.status }}">{{ order.status }}</span>
+              </td>
+              <td class="total-cell">${{ order.total | number:'1.2-2' }}</td>
+              <td class="actions-cell" (click)="$event.stopPropagation()">
+                <div class="action-wrap">
+                  <button class="action-btn" (click)="toggleMenu(order.id)">
+                    <svg width="18" height="4" viewBox="0 0 18 4" fill="currentColor">
+                      <circle cx="2" cy="2" r="2"/><circle cx="9" cy="2" r="2"/><circle cx="16" cy="2" r="2"/>
+                    </svg>
+                  </button>
+                  @if (openMenuId() === order.id) {
+                    <div class="dropdown-menu">
+                      <a [routerLink]="['/orders', order.id]" class="menu-item">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+                        </svg>
+                        View Details
+                      </a>
+                      <button class="menu-item">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/>
+                        </svg>
+                        Update Status
+                      </button>
+                      <button class="menu-item danger">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/>
+                        </svg>
+                        Cancel Order
+                      </button>
+                    </div>
+                  }
+                </div>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="6" class="empty-state">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+                  <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/>
+                  <rect x="9" y="3" width="6" height="4" rx="2"/>
+                </svg>
+                <p>No orders found</p>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Footer -->
+    <div class="table-footer">
+      <span class="showing-label">Showing {{ filteredOrders().length }} of {{ allOrders().length }} orders</span>
+    </div>
+  }
+</div>

@@ -1,1 +1,104 @@
-<p>cart works!</p>
+<div class="cart-page">
+  <!-- Breadcrumb -->
+  <nav class="breadcrumb">
+    <a href="/">Home</a>
+    <span class="separator">›</span>
+    <span class="current">Cart</span>
+  </nav>
+
+  <h1 class="page-title">YOUR CART</h1>
+
+  @if (items().length > 0) {
+    <div class="cart-layout">
+      <!-- Cart Items -->
+      <div class="cart-items">
+        @for (item of items(); track item.productId) {
+          <div class="cart-item">
+            <div class="item-image">
+              <img [src]="item.image" [alt]="item.productName" />
+            </div>
+
+            <div class="item-details">
+              <h3 class="item-name">{{ item.productName }}</h3>
+              <p class="item-description">{{ item.description }}</p>
+
+              <div class="item-actions">
+                <app-quantity-selector
+                  [quantity]="item.quantity"
+                  (quantityChange)="updateQty(item.productId, $event)"
+                >
+                </app-quantity-selector>
+
+                <button class="btn-remove" (click)="remove(item.productId)">
+                  <i class="bi bi-trash"></i>
+                </button>
+              </div>
+            </div>
+
+            <div class="item-price">
+              <span class="price">${{ item.total }}</span>
+            </div>
+          </div>
+        }
+      </div>
+
+      <!-- Order Summary -->
+      <aside class="order-summary">
+        <h2>Order Summary</h2>
+
+        <div class="summary-row">
+          <span>Subtotal</span>
+          <span>${{ summary().subtotal }}</span>
+        </div>
+
+        <div class="summary-row discount">
+          <span>Discount (-20%)</span>
+          <span class="discount-amount">-${{ summary().discount }}</span>
+        </div>
+
+        <div class="summary-row">
+          <span>Delivery Fee</span>
+          <span>${{ summary().deliveryFee }}</span>
+        </div>
+
+        <div class="summary-total">
+          <span>Total</span>
+          <span class="total-amount">${{ summary().total }}</span>
+        </div>
+
+        <!-- Coupon -->
+        <div class="coupon-section">
+          <div class="coupon-input">
+            <i class="bi bi-tag"></i>
+            <input type="text" placeholder="Add promo code" [value]="couponCode()" (input)="onCouponInput($event)" />
+          </div>
+          <button class="btn-apply" (click)="applyCoupon()">Apply</button>
+        </div>
+        @if (couponApplied()) {
+          <div class="coupon-message">
+            <i class="bi bi-check-circle"></i> Coupon applied successfully!
+          </div>
+        }
+        @if (couponError()) {
+          <div class="coupon-message" style="color: #dc3545;">
+            <i class="bi bi-x-circle"></i> Invalid coupon code.
+          </div>
+        }
+
+        <!-- Checkout Button -->
+        <button class="btn-checkout" (click)="checkout()">
+          Go to Checkout
+          <i class="bi bi-arrow-right"></i>
+        </button>
+      </aside>
+    </div>
+  } @else {
+    <!-- Empty Cart -->
+    <div class="empty-cart">
+      <i class="bi bi-cart-x"></i>
+      <h2>Your cart is empty</h2>
+      <p>Add some items to your cart to see them here.</p>
+      <a href="/category" class="btn-continue">Continue Shopping</a>
+    </div>
+  }
+</div>

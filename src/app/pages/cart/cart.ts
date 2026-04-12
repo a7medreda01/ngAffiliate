@@ -2,13 +2,15 @@ import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { CartService } from '../../services/cart/cart';
+import { QuantitySelectorComponent } from '../../components/quantity-selector/quantity-selector';
 
 @Component({
   selector: 'app-cart',
   standalone: true,
   imports: [
     CommonModule,
-    FormsModule
+    FormsModule,
+    QuantitySelectorComponent
   ],
   templateUrl: './cart.html',
   styleUrls: ['./cart.css']
@@ -23,6 +25,10 @@ export class CartComponent {
   readonly items = this.cartService.items;
   readonly summary = this.cartService.summary;
   readonly loading = this.cartService.loading;
+
+  onCouponInput(event: Event): void {
+    this.couponCode.set((event.target as HTMLInputElement).value);
+  }
 
   async updateQty(id: number, qty: number): Promise<void> {
     await this.cartService.updateQuantity(id, qty);

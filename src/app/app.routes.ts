@@ -12,6 +12,9 @@ import { PaymentOptions } from './features/account/payment-options/payment-optio
 import { MyOrders } from './features/account/my-orders/my-orders';
 import { Wishlist } from './features/wishlist/wishlist/wishlist';
 import { Checkout } from './features/checkout/checkout';
+import { CartComponent } from './pages/cart/cart';
+import { CategoryComponent } from './pages/category/category';
+
 export const routes: Routes = [
   {
     path: '',
@@ -22,6 +25,8 @@ export const routes: Routes = [
     ]
   },
   { path: 'product/:id', component: Product },
+  { path: 'cart', component: CartComponent },
+  { path: 'category', component: CategoryComponent },
   { path: 'login', component: Login, canActivate: [guestGuard] },
   { path: 'register', component: Register, canActivate: [guestGuard] },
   {
@@ -36,8 +41,17 @@ export const routes: Routes = [
   },
   { path: 'wishlist', component: Wishlist },
   { path: 'checkout', component: Checkout },
-  { path: 'account', component: Account },
+  {
+    path: 'orders',
+    loadComponent: () =>
+      import('./pages/orders/orders').then(m => m.OrdersComponent),
+    canActivate: [authGuard]
+  },
+  {
+    path: 'orders/:id',
+    loadComponent: () =>
+      import('./pages/order-detail/order-detail').then(m => m.OrderDetailComponent),
+    canActivate: [authGuard]
+  },
   { path: '**', component: NotFound }
-
 ];
-

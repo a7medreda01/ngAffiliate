@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["src/app/features/account/account/account.css"],
+  "sourcesContent": [".cartLink,.homeLink{\r\n    text-decoration: none;\r\n    color: gray;\r\n}\r\n.links{\r\n    margin-top: 50px;\r\n}\r\n.div-router{\r\n      box-shadow: 0 0 10px rgba(0,0,0,0.05); /* shadow \u062E\u0641\u064A\u0641 */\r\n      padding: 70px;\r\n}\r\n@media (max-width:800px) {\r\n    .div-router{\r\n      box-shadow: 0 0 10px rgba(0,0,0,0.05); /* shadow \u062E\u0641\u064A\u0641 */\r\n      padding: 10px;\r\n}\r\n}\r\n"],
+  "mappings": ";AAAA,CAAC;AAAS,CAAC;AACP,mBAAiB;AACjB,SAAO;AACX;AACA,CAAC;AACG,cAAY;AAChB;AACA,CAAC;AACK,cAAY,EAAE,EAAE,KAAK,KAAK,CAAC,EAAC,CAAC,EAAC,CAAC,EAAC;AAChC,WAAS;AACf;AACA,OAAO,CAAC,SAAS,CAAC;AACd,GALH;AAMK,gBAAY,EAAE,EAAE,KAAK,KAAK,CAAC,EAAC,CAAC,EAAC,CAAC,EAAC;AAChC,aAAS;AACf;AACA;",
+  "names": []
+}

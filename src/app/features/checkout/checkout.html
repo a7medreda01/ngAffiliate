@@ -58,13 +58,13 @@
   
       <!-- Right side -->
       <div class="order-section">
-        @for (product of products; track product.id) {
+        @for (product of products; track product.productId) {
           <div class="d-flex justify-content-between p-3 align-items-center product-row">
             <div class="d-flex gap-2 align-items-center">
               <img [src]="product.image" alt="product" class="product-img">
-              <h6 class="ms-3 mb-0">{{ product.name }}</h6>
+              <h6 class="ms-3 mb-0">{{ product.productName }}</h6>
             </div>
-            <h6 class="mb-0">{{ product.price * product.quantity | currency:'USD' }}</h6>
+            <h6 class="mb-0">{{ product.total | currency:'USD' }}</h6>
           </div>
         }
   
@@ -118,7 +118,12 @@
           <button class="btn border btn-coupon p-2">Apply Coupon</button>
         </div>
   
-        <button class="btn border btn-coupon p-2 my-3 px-lg-4 place-order-btn">Place Order</button>
+        @if (orderError) {
+          <p class="text-danger">{{ orderError }}</p>
+        }
+        <button class="btn border btn-coupon p-2 my-3 px-lg-4 place-order-btn" (click)="placeOrder()" [disabled]="isSubmitting">
+          {{ isSubmitting ? 'Placing Order...' : 'Place Order' }}
+        </button>
       </div>
     </div>
   </div>

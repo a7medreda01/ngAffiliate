@@ -1,16 +1,19 @@
-import { Injectable, inject, signal } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { CartItem, CartSummary, CartResponse } from '../../models/cart-item';
+import { Injectable, signal } from '@angular/core';
+import { CartItem, CartSummary } from '../../models/cart-item';
 import { Product } from '../../models/product';
-import { environment } from '../../shared/environment/environment';
-import { firstValueFrom } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CartService {
-  private readonly http = inject(HttpClient);
-  private readonly apiUrl = `${environment.baseUrl}cart`;
+  private readonly STORAGE_KEY = 'cart_items';
+  private readonly DELIVERY_FEE = 15;
+  private readonly COUPON_CODES: Record<string, number> = {
+    'SAVE20': 20,
+    'SAVE10': 10,
+    'WELCOME': 15
+  };
+  private appliedDiscount = 0;
 
   // State
   private readonly _items = signal<CartItem[]>([]);
@@ -29,39 +32,70 @@ export class CartService {
   readonly loading = this._loading.asReadonly();
 
   constructor() {
-    this.loadCart();
+    this.loadFromStorage();
   }
 
-  async loadCart(): Promise<void> {
-    this._loading.set(true);
+  private loadFromStorage(): void {
     try {
-      const response = await firstValueFrom(
-        this.http.get<CartResponse>(this.apiUrl, { withCredentials: true })
-      );
-      this._items.set(response.items);
-      this._summary.set(response.summary);
-    } catch (error) {
-      console.error('Failed to load cart:', error);
-    } finally {
-      this._loading.set(false);
+      const stored = localStorage.getItem(this.STORAGE_KEY);
+      if (stored) {
+        const items: CartItem[] = JSON.parse(stored);
+        this._items.set(items);
+        this.recalculateSummary();
+      }
+    } catch {
+      console.warn('Failed to load cart from localStorage');
     }
+  }
+
+  private saveToStorage(): void {
+    try {
+      localStorage.setItem(this.STORAGE_KEY, JSON.stringify(this._items()));
+    } catch {
+      console.warn('Failed to save cart to localStorage');
+    }
+  }
+
+  private recalculateSummary(): void {
+    const items = this._items();
+    const subtotal = items.reduce((sum, item) => sum + item.total, 0);
+    const discount = subtotal * (this.appliedDiscount / 100);
+    const deliveryFee = items.length > 0 ? this.DELIVERY_FEE : 0;
+    const total = subtotal - discount + deliveryFee;
+
+    this._summary.set({
+      subtotal: Math.round(subtotal * 100) / 100,
+      discount: Math.round(discount * 100) / 100,
+      deliveryFee,
+      total: Math.round(total * 100) / 100,
+      itemCount: items.reduce((count, item) => count + item.quantity, 0)
+    });
   }
 
   async addToCart(product: Product, quantity: number = 1): Promise<void> {
     this._loading.set(true);
     try {
-      const response = await firstValueFrom(
-        this.http.post<CartResponse>(
-          this.apiUrl,
-          { productId: product.id, quantity },
-          { withCredentials: true }
-        )
-      );
-      this._items.set(response.items);
-      this._summary.set(response.summary);
-    } catch (error) {
-      console.error('Failed to add to cart:', error);
-      throw error;
+      const items = [...this._items()];
+      const existing = items.find(i => i.productId === product.id);
+
+      if (existing) {
+        existing.quantity += quantity;
+        existing.total = existing.price * existing.quantity;
+      } else {
+        items.push({
+          productId: product.id,
+          productName: product.name,
+          description: product.description,
+          price: product.price,
+          image: product.image ?? product.images?.[0] ?? '',
+          quantity,
+          total: product.price * quantity
+        });
+      }
+
+      this._items.set(items);
+      this.recalculateSummary();
+      this.saveToStorage();
     } finally {
       this._loading.set(false);
     }
@@ -75,17 +109,14 @@ export class CartService {
 
     this._loading.set(true);
     try {
-      const response = await firstValueFrom(
-        this.http.put<CartResponse>(
-          `${this.apiUrl}/${productId}`,
-          { quantity },
-          { withCredentials: true }
-        )
+      const items = this._items().map(item =>
+        item.productId === productId
+          ? { ...item, quantity, total: item.price * quantity }
+          : item
       );
-      this._items.set(response.items);
-      this._summary.set(response.summary);
-    } catch (error) {
-      console.error('Failed to update quantity:', error);
+      this._items.set(items);
+      this.recalculateSummary();
+      this.saveToStorage();
     } finally {
       this._loading.set(false);
     }
@@ -94,47 +125,30 @@ export class CartService {
   async removeFromCart(productId: number): Promise<void> {
     this._loading.set(true);
     try {
-      const response = await firstValueFrom(
-        this.http.delete<CartResponse>(
-          `${this.apiUrl}/${productId}`,
-          { withCredentials: true }
-        )
-      );
-      this._items.set(response.items);
-      this._summary.set(response.summary);
-    } catch (error) {
-      console.error('Failed to remove from cart:', error);
+      const items = this._items().filter(item => item.productId !== productId);
+      this._items.set(items);
+      this.recalculateSummary();
+      this.saveToStorage();
     } finally {
       this._loading.set(false);
     }
   }
 
   async applyCoupon(code: string): Promise<boolean> {
-    try {
-      const result = await firstValueFrom(
-        this.http.post<boolean>(
-          `${this.apiUrl}/coupon`,
-          { code },
-          { withCredentials: true }
-        )
-      );
-      if (result) {
-        await this.loadCart();
-      }
-      return result;
-    } catch (error) {
-      console.error('Failed to apply coupon:', error);
-      return false;
+    const discount = this.COUPON_CODES[code.toUpperCase()];
+    if (discount) {
+      this.appliedDiscount = discount;
+      this.recalculateSummary();
+      return true;
     }
+    return false;
   }
 
   async clearCart(): Promise<void> {
     this._loading.set(true);
     try {
-      await firstValueFrom(
-        this.http.delete(this.apiUrl, { withCredentials: true })
-      );
       this._items.set([]);
+      this.appliedDiscount = 0;
       this._summary.set({
         subtotal: 0,
         discount: 0,
@@ -142,8 +156,7 @@ export class CartService {
         total: 0,
         itemCount: 0
       });
-    } catch (error) {
-      console.error('Failed to clear cart:', error);
+      this.saveToStorage();
     } finally {
       this._loading.set(false);
     }

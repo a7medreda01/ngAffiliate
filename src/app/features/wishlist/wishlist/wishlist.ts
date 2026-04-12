@@ -1,56 +1,58 @@
-import { Component } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { Items } from '../items/items';
 import { JustForYou } from '../just-for-you/just-for-you';
 import { CommonModule } from '@angular/common';
+import { WishlistService, WishlistItem } from '../../../services/wishlist/wishlist.service';
 
 @Component({
   selector: 'app-wishlist',
-  imports: [Items,JustForYou,CommonModule],
+  imports: [Items, JustForYou, CommonModule],
   templateUrl: './wishlist.html',
   styleUrl: './wishlist.css',
 })
-export class Wishlist {
-products: any[] = [
-  {
-    name: 'HeadPhone',
-    price: 20,
-    oldPrice: 30,
-    rating: 4.5,
-    image: 'assets/images/products/p2.png',
-    sale: 30
-  },
-  {
-    name: 'Products Four',
-    price: 25,
-    oldPrice: 35,
-    rating: 3.5,
-    image: 'assets/images/products/p5.png',
-    sale: 28
-  },
-  {
-    name: 'Product Num5',
-    price: 15,
-    oldPrice: 20,
-    rating: 4,
-    image: 'assets/images/products/p1.png',
-    sale: 25
-  },
-  {
-    name: 'Hair Device',
-    price: 18,
-    oldPrice: 30,
-    rating: 5,
-    image: 'assets/images/products/p4.png',
-    sale: 40
-  },
-  {
-    name: 'Airpods',
-    price: 22,
-    oldPrice: 30,
-    rating: 4.2,
-    image: 'assets/images/products/p3.png',
-    sale: 27
-  }
-];
+export class Wishlist implements OnInit {
+  private wishlistService = inject(WishlistService);
 
+  products: any[] = [];
+  loading = false;
+  error = '';
+
+  ngOnInit(): void {
+    this.loadWishlist();
+  }
+
+  loadWishlist(): void {
+    this.loading = true;
+    this.error = '';
+    this.wishlistService.getWishlist().subscribe({
+      next: (items: WishlistItem[]) => {
+        this.products = items.map(item => ({
+          id: item.productId,
+          name: item.name,
+          price: item.price,
+          oldPrice: undefined,
+          rating: item.rating ?? 0,
+          image: item.imageUrl ?? 'assets/images/products/placeholder.png',
+          sale: undefined
+        }));
+        this.loading = false;
+      },
+      error: (err) => {
+        console.error('Failed to load wishlist:', err);
+        this.error = 'Failed to load wishlist';
+        this.loading = false;
+        // Fallback to empty array
+        this.products = [];
+      }
+    });
+  }
+
+  removeFromWishlist(productId: number): void {
+    this.wishlistService.removeFromWishlist(productId).subscribe({
+      next: () => {
+        this.products = this.products.filter(p => p.id !== productId);
+      },
+      error: (err) => console.error('Failed to remove from wishlist:', err)
+    });
+  }
 }

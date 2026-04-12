@@ -1,8 +1,11 @@
 <div class="price-filter">
-  <h4>Price</h4>
-  <div class="range-slider">
+  <!-- Dual range track -->
+  <div class="range-track-wrap">
+    <div class="range-fill" [style.left.%]="fillLeft()" [style.width.%]="fillWidth()"></div>
+
     <input
       type="range"
+      class="range-input range-min"
       [min]="min()"
       [max]="max()"
       [value]="value().min"
@@ -10,13 +13,16 @@
     />
     <input
       type="range"
+      class="range-input range-max"
       [min]="min()"
       [max]="max()"
       [value]="value().max"
       (input)="updateMax($event)"
     />
   </div>
-  <div class="price-inputs">
+
+  <!-- Labels -->
+  <div class="price-labels">
     <span>${{ value().min }}</span>
     <span>${{ value().max }}</span>
   </div>

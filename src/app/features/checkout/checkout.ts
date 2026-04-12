@@ -1,7 +1,9 @@
 import { CommonModule, CurrencyPipe } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
+import { CartService } from '../../services/cart/cart';
+import { OrderService } from '../../services/order-service/order-service';
 
 @Component({
   selector: 'app-checkout',
@@ -11,6 +13,10 @@ import { RouterLink } from '@angular/router';
   styleUrl: './checkout.css',
 })
 export class Checkout {
+  private cartService = inject(CartService);
+  private orderService = inject(OrderService);
+  private router = inject(Router);
+
   billingData = {
     name: '',
     companyName: '',
@@ -24,32 +30,50 @@ export class Checkout {
     couponCode: ''
   };
 
-  products: any[] = [
-    {
-      id: 1,
-      name: 'LCD Monitor',
-      price: 650,
-      quantity: 1,
-      image: 'assets/images/products/p1.png'
-    },
-    {
-      id: 2,
-      name: 'H1 Gamepad',
-      price: 1100,
-      quantity: 1,
-      image: 'assets/images/products/p2.png'
-    }
-  ];
+  isSubmitting = false;
+  orderError = '';
+
+  get products() {
+    return this.cartService.items();
+  }
 
   get subTotal(): number {
-    return this.products.reduce((total, product) => total + (product.price * product.quantity), 0);
+    return this.cartService.summary().subtotal;
   }
 
   get shipping(): number {
-    return 0;
+    return this.cartService.summary().deliveryFee;
   }
 
   get total(): number {
-    return this.subTotal + this.shipping;
+    return this.cartService.summary().total;
+  }
+
+  placeOrder(): void {
+    if (this.isSubmitting) return;
+    this.isSubmitting = true;
+    this.orderError = '';
+
+    const orderData = {
+      customerName: this.billingData.name,
+      customerPhone: this.billingData.phoneNumber,
+      customerAddress: `${this.billingData.streetAddress}, ${this.billingData.apartment}, ${this.billingData.townCity}`,
+      affiliateCommissionPct: 0,
+    };
+
+    this.orderService.createOrder(orderData).subscribe({
+      next: (res) => {
+        this.isSubmitting = false;
+        this.cartService.clearCart();
+        console.log('Order placed:', res);
+        // Navigate to a success page or orders page
+        this.router.navigate(['/home']);
+      },
+      error: (err) => {
+        this.isSubmitting = false;
+        this.orderError = 'Failed to place order. Please try again.';
+        console.error('Order failed:', err);
+      }
+    });
   }
 }

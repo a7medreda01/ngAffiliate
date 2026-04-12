@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["src/app/features/account/payment-options/payment-options.css"],
+  "sourcesContent": ["/* Center balance */\r\n.card.text-center h2 {\r\n  font-size: 2.5rem;\r\n}\r\n\r\n/* Transaction table */\r\n.table th, .table td {\r\n  vertical-align: middle;\r\n}\r\n\r\n/* Add money card */\r\n.card .btn {\r\n  height: 100%;\r\n}"],
+  "mappings": ";AACA,CAAC,IAAI,CAAC,YAAY;AAChB,aAAW;AACb;AAGA,CAAC,MAAM;AAAI,CAAV,MAAiB;AAChB,kBAAgB;AAClB;AAGA,CAVC,KAUK,CAAC;AACL,UAAQ;AACV;",
+  "names": []
+}
