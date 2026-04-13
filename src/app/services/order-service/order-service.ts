@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { environment } from '../../shared/environment/environment';
 import { Order, OrderStatus } from '../../models/order';
 
-<<<<<<< HEAD
+
 @Injectable({ providedIn: 'root' })
 export class OrderService {
   private readonly base = `${environment.baseUrl}Orders`;
@@ -34,47 +34,5 @@ export class OrderService {
 
   cancelOrder(id: string | number): Observable<void> {
     return this.http.delete<void>(`${this.base}/${id}`);
-=======
-export interface OrderItem {
-  productId:   number;
-  productName: string;
-  price:       number;
-  quantity:    number;
-}
-
-export interface Order {
-  id:                     number;
-  totalPrice:             number;
-  affiliateCommissionPct: number;
-  status:                 string;
-  createdAt:              string;
-  items:                  OrderItem[]; // ← أضف دي
-}
-
-@Injectable({
-  providedIn: 'root',
-})
-export class OrderService {
-  constructor(private http: HttpClient) {}
-
-  // ─── GET /api/Orders ───────────────────────────────
-  getOrders(): Observable<Order[]> {
-    return this.http.get<Order[]>(`${environment.baseUrl}Orders`);
-  }
-
-  // ─── GET /api/Orders/{id} ──────────────────────────
-  getOrderById(id: number): Observable<Order> {
-    return this.http.get<Order>(`${environment.baseUrl}Orders/${id}`);
-  }
-
-  // ─── POST /api/Orders ──────────────────────────────
-  createOrder(order: any): Observable<any> {
-    return this.http.post(`${environment.baseUrl}Orders`, order);
-  }
-
-  // ─── PUT /api/Orders/{id}/status ───────────────────
-  cancelOrder(orderId: number): Observable<any> {
-    return this.http.put(`${environment.baseUrl}Orders/${orderId}/status`, { status: 'Cancelled' });
->>>>>>> 0a46da4048b0f3ffac5edf89007655a5df6acc70
   }
 }

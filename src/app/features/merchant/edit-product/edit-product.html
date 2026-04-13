@@ -1,0 +1,267 @@
+<div class="ep-page">
+
+  <!-- Delete Confirmation Modal -->
+  @if (showDeleteModal) {
+    <div class="modal-backdrop" (click)="cancelDelete()">
+      <div class="modal-box" (click)="$event.stopPropagation()">
+        <div class="modal-icon">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+            <path d="M10 11v6M14 11v6M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
+          </svg>
+        </div>
+        <h3>Delete Product?</h3>
+        <p>This action cannot be undone. The product and all its images will be permanently removed.</p>
+        <div class="modal-actions">
+          <button class="btn-modal-cancel" (click)="cancelDelete()">Cancel</button>
+          <button class="btn-modal-delete" (click)="deleteProduct()" [disabled]="isDeleting">
+            {{ isDeleting ? 'Deleting...' : 'Yes, Delete' }}
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Top Bar -->
+  <div class="ep-topbar">
+    <div class="ep-breadcrumb">
+      <a routerLink="/merchant/home">Catalog</a>
+      <span class="sep">›</span>
+      <span>Edit Product</span>
+    </div>
+    <div class="ep-topbar-actions">
+      <button class="btn-danger-outline" (click)="confirmDelete()">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+          <path d="M10 11v6M14 11v6"/>
+        </svg>
+        Delete Product
+      </button>
+      <button class="btn-ghost" (click)="cancel()">Cancel</button>
+      <button class="btn-primary" (click)="saveChanges()" [disabled]="isSaving">
+        @if (isSaving) {
+          <span class="spinner"></span> Saving...
+        } @else {
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+            <polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/>
+          </svg>
+          Save Changes
+        }
+      </button>
+    </div>
+  </div>
+
+  <!-- Alerts -->
+  @if (successMsg) {
+    <div class="alert-success">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>
+      </svg>
+      {{ successMsg }}
+    </div>
+  }
+  @if (errorMsg) {
+    <div class="alert-error">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+      </svg>
+      {{ errorMsg }}
+    </div>
+  }
+
+  @if (isLoading) {
+    <div class="loading-state">
+      <div class="loading-ring"></div>
+      <span>Loading product...</span>
+    </div>
+  }
+
+  @if (!isLoading) {
+    <div class="ep-title-row">
+      <div>
+        <h1>{{ product.name || 'Edit Product' }}</h1>
+        <span class="ep-subtitle">ID #{{ productId }} · {{ totalImages }} image{{ totalImages !== 1 ? 's' : '' }}</span>
+      </div>
+      <div class="status-pill" [class.active]="product.status === 'Active'" [class.inactive]="product.status !== 'Active'">
+        <span class="dot"></span>
+        {{ product.status }}
+      </div>
+    </div>
+
+    <div class="ep-grid">
+
+      <!-- LEFT -->
+      <div class="ep-left">
+
+        <!-- Images Card -->
+        <div class="ep-card">
+          <div class="card-head">
+            <div class="card-head-left">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/>
+                <polyline points="21 15 16 10 5 21"/>
+              </svg>
+              <span>Product Images</span>
+            </div>
+            <label class="btn-add-img">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+              </svg>
+              Add Photo
+              <input type="file" multiple accept="image/*" (change)="onImageSelected($event)" style="display:none">
+            </label>
+          </div>
+
+          <!-- Main Preview -->
+          <div class="main-preview">
+            @if (selectedMainImage) {
+              <img [src]="selectedMainImage" alt="preview" class="main-preview-img">
+              <div class="main-preview-badge">Preview</div>
+            } @else {
+              <label class="main-preview-empty">
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                  <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/>
+                  <polyline points="21 15 16 10 5 21"/>
+                </svg>
+                <span>Click to upload images</span>
+                <input type="file" multiple accept="image/*" (change)="onImageSelected($event)" style="display:none">
+              </label>
+            }
+          </div>
+
+          <!-- Thumbnails -->
+          <div class="thumbs-row">
+            @for (img of existingImages; track img) {
+              <div class="thumb" [class.thumb-active]="img === selectedMainImage" (click)="selectMainImage(img)">
+                <img [src]="img" alt="">
+                <button class="thumb-x" (click)="$event.stopPropagation(); removeExistingImage($index)">
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                    <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                  </svg>
+                </button>
+              </div>
+            }
+
+            @for (url of previewUrls; track $index) {
+              <div class="thumb thumb-new" [class.thumb-active]="url === selectedMainImage" (click)="selectMainImage(url)">
+                <img [src]="url" alt="">
+                <button class="thumb-x" (click)="$event.stopPropagation(); removeNewImage($index)">
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                    <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                  </svg>
+                </button>
+                <span class="new-tag">New</span>
+              </div>
+            }
+
+            <label class="thumb-add">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+              </svg>
+              <input type="file" multiple accept="image/*" (change)="onImageSelected($event)" style="display:none">
+            </label>
+          </div>
+
+          @if (totalImages === 0) {
+            <p class="no-img-hint">No images yet — click "Add Photo" to upload.</p>
+          }
+        </div>
+
+        <!-- Identification -->
+        <div class="ep-card">
+          <div class="card-head">
+            <div class="card-head-left">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/>
+                <line x1="7" y1="7" x2="7.01" y2="7"/>
+              </svg>
+              <span>Identification</span>
+            </div>
+          </div>
+
+          <div class="field">
+            <label>Product Name</label>
+            <input type="text" [(ngModel)]="product.name" placeholder="Enter product name">
+          </div>
+
+          <div class="field-row">
+            <div class="field">
+              <label>Category</label>
+              <select [(ngModel)]="product.categoryId">
+                <option value="0" disabled>Select category</option>
+                <option *ngFor="let cat of categories" [value]="cat.id">{{ cat.name }}</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>Status</label>
+              <select [(ngModel)]="product.status">
+                <option value="Active">Active</option>
+                <option value="Inactive">Inactive</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- RIGHT -->
+      <div class="ep-right">
+
+        <!-- Inventory -->
+        <div class="ep-card">
+          <div class="card-head">
+            <div class="card-head-left">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+              </svg>
+              <span>Inventory & Pricing</span>
+            </div>
+          </div>
+
+          <div class="stats-row">
+            <div class="stat-card">
+              <label>Unit Price (USD)</label>
+              <div class="price-field">
+                <span class="price-sign">$</span>
+                <input type="number" [(ngModel)]="product.price" min="0" placeholder="0.00">
+              </div>
+            </div>
+            <div class="stat-card">
+              <label>Stock Quantity</label>
+              <input type="number" [(ngModel)]="product.stock" min="0" placeholder="0">
+              <span class="stock-badge" [class.healthy]="product.stock > 10" [class.low]="product.stock <= 10 && product.stock > 0" [class.empty]="product.stock === 0">
+                {{ product.stock === 0 ? 'Out of stock' : product.stock > 10 ? 'Healthy stock' : 'Low stock' }}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Description -->
+        <div class="ep-card">
+          <div class="card-head">
+            <div class="card-head-left">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="17" y1="10" x2="3" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/>
+                <line x1="21" y1="14" x2="3" y2="14"/><line x1="17" y1="18" x2="3" y2="18"/>
+              </svg>
+              <span>Description</span>
+            </div>
+          </div>
+
+          <div class="field">
+            <label>Short Description</label>
+            <textarea [(ngModel)]="product.description" rows="3" placeholder="Brief summary of the product..."></textarea>
+          </div>
+
+          <div class="field">
+            <label>Details & Specs</label>
+            <textarea [(ngModel)]="product.details" rows="5" placeholder="Key features, specifications, materials..."></textarea>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  }
+
+</div>
