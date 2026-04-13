@@ -35,14 +35,21 @@
             </a>
 
             @if (isAffiliate) {
-                <a class="btn icon" [routerLink]="wishlistLink">
-                    <i class="bi bi-heart"></i>
-                    <p class="length">{{ wishLength }}</p>
-                </a>
-                <a class="btn icon" [routerLink]="cartLink">
-                    <i class="bi bi-cart"></i>
-                    <p class="length">{{ cartLength }}</p>
-                </a>
+              <!-- Wishlist -->
+          <a class="btn icon" [routerLink]="wishlistLink">
+           <i class="bi bi-heart"></i>
+           @if (wishLength > 0) {
+                <p class="length">{{ wishLength }}</p>
+                }
+             </a>
+
+                  <!-- Cart -->
+          <a class="btn icon" [routerLink]="cartLink">
+          <i class="bi bi-cart"></i>
+             @if (cartLength > 0) {
+             <p class="length">{{ cartLength }}</p>
+           }
+            </a>
             }
 
             <a class="btn icon profileicon" id="profileDropdown"

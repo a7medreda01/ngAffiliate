@@ -2,6 +2,8 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../services/auth/auth';
+import { CartService } from '../../services/cart/cart';
+import { WishlistService } from '../../services/wishlist/wishlist.service';
 
 @Component({
   selector: 'app-navbar',
@@ -11,8 +13,6 @@ import { AuthService } from '../../services/auth/auth';
 })
 export class Navbar implements OnInit {
 
-  wishLength: number = 5;
-  cartLength: number = 3;
   topText: string = "Summer Sale For All Swim And Free Express Delivery - OFF 50%!";
   showSearch = false;
 
@@ -27,8 +27,13 @@ export class Navbar implements OnInit {
   ordersLink  = '/affiliate/account/my-orders';
   paymentLink = '/affiliate/account/payment';
 
+    get wishLength() { return this.wishlistService.wishlistCount(); }
+  get cartLength()  { return this.cartService.summary().itemCount; }
+
   constructor(
     private authService: AuthService,
+    private wishlistService: WishlistService,
+    private cartService:     CartService,
     private router: Router
   ) {}
 
@@ -40,6 +45,11 @@ export class Navbar implements OnInit {
     if (this.isMerchant) {
       this.homeLink    = '/merchant/home';
       this.accountLink = '/merchant/account';
+    }
+       if (this.isAffiliate) {
+      this.wishlistService.getWishlist().subscribe({
+        next: (res) => this.wishlistService.updateSignals(res)
+      });
     }
   }
 
