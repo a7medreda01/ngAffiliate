@@ -1,14 +1,7 @@
-
 import { CommonModule, NgClass } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-<<<<<<< HEAD
-import { ProductService } from '../../../services/product/product';
-import { Product } from '../../../models/product';
-import { NgModel } from '@angular/forms';
-=======
 import { ProductService } from '../../../services/product/product-service';
->>>>>>> 0a46da4048b0f3ffac5edf89007655a5df6acc70
 import { ProductFaqs } from '../../../shared/components/product-faqs/product-faqs';
 import { HttpClient } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
@@ -28,64 +21,9 @@ export class ProductDetails implements OnInit {
   errorMsg             = '';
   quantity             = 1;
 
-<<<<<<< HEAD
-    this.service.getProductById(id).subscribe({
-      next: (p) => {
-        if (p) {
-          this.product = p;
-          this.specsText = this.product.details ?? '';
-          this.specsArray = this.specsText.split('.').filter(x => x.trim() !== '');
-
-          //rating
-          const full = Math.floor(this.product.rating);
-          const hasHalf = this.product.rating % 1 >= 0.5;
-          const empty = 5 - full - (hasHalf ? 1 : 0);
-
-          this.fullStars = Array(full);
-          this.halfStar = hasHalf;
-          this.emptyStars = Array(empty);
-        }
-      },
-      error: (err) => console.error(err)
-    });
-
-  }
-  getFullStars(rating: number): number[] {
-  return Array(Math.floor(rating)).fill(0);
-}
-
-  // GetProduct() {
-  //   const id = Number(this.route.snapshot.paramMap.get('id'));
-  //   this.service.getProductById(id).subscribe({
-  //     next: (res) => {
-  //       this.product = res;
-  //       console.log(this.product)
-  //           this.specsText = this.product.details
-  //   this.specsArray = this.specsText.split('.').filter(x => x.trim() !== '');
-  //   console.log("specsArray")
-  //   console.log(this.specsArray)
-  //     },
-  //     error: (err) => console.error(err)
-  //   });
-  // }
-
-
-  //calculate rating of product
-  fullStars: number[] = [];
-  halfStar: boolean = false;
-  emptyStars: number[] = [];
-
-
-
-  //design
-  selectedImage: string = '';
-  selectedColor: string = '';
-  selectedSize: string = '';
-=======
   fullStars:  any[] = [];
   halfStar:   boolean = false;
   emptyStars: any[] = [];
->>>>>>> 0a46da4048b0f3ffac5edf89007655a5df6acc70
 
   selectedImage = '';
   selectedColor = '';
@@ -103,15 +41,14 @@ export class ProductDetails implements OnInit {
   hoveredStar     = 0;
 
   // Cart & Wishlist
-  cartLoading      = false;
-  wishlistLoading  = false;
-  cartSuccess      = '';
-  cartError        = '';
+  cartLoading     = false;
+  wishlistLoading = false;
+  cartSuccess     = '';
+  cartError       = '';
   wishlistSuccess = '';
 
-  private affiliateId = 1; // غيّره للـ logged-in user
-  private cartId      = 1; // مؤقتاً لحد ما تعمل endpoint
-  
+  private affiliateId = 1;
+  private cartId      = 1;
 
   constructor(
     private route:   ActivatedRoute,
@@ -135,12 +72,10 @@ export class ProductDetails implements OnInit {
         }
         this.product = res;
 
-        // Specs
         this.specsArray = (res.details ?? '')
           .split('.')
           .filter((x: string) => x.trim() !== '');
 
-        // Rating
         const avg     = res.reviews?.length
           ? res.reviews.reduce((sum: number, r: any) => sum + r.rating, 0) / res.reviews.length
           : 0;
@@ -165,18 +100,15 @@ export class ProductDetails implements OnInit {
   increase() { this.quantity++; }
   decrease() { if (this.quantity > 1) this.quantity--; }
 
-  // ===== Add to Cart =====
   addToCart(): void {
     this.cartLoading = true;
     this.cartError   = '';
     this.cartSuccess = '';
 
-    const body = {
+    this.http.post(`${environment.baseUrl}Cart/${this.cartId}/items`, {
       productId: this.product.id,
       quantity:  this.quantity
-    };
-
-    this.http.post(`${environment.baseUrl}Cart/${this.cartId}/items`, body).subscribe({
+    }).subscribe({
       next: () => {
         this.cartSuccess = 'Added to cart!';
         this.cartLoading = false;
@@ -189,29 +121,27 @@ export class ProductDetails implements OnInit {
     });
   }
 
-  // ===== Add to Wishlist =====
- addToWishlist(): void {
-  this.wishlistLoading = true;
-  this.wishlistSuccess = '';
+  addToWishlist(): void {
+    this.wishlistLoading = true;
+    this.wishlistSuccess = '';
 
-  this.http.post(`${environment.baseUrl}Wishlist`, {
-    productId: this.product.id
-  }, { responseType: 'text' }).subscribe({
-    next: () => {
-      this.wishlistLoading = false;
-      this.wishlistSuccess = 'Added to wishlist!';
-      setTimeout(() => this.wishlistSuccess = '', 3000);
-    },
-    error: () => {
-      this.wishlistLoading = false;
-    }
-  });
-}
+    this.http.post(`${environment.baseUrl}Wishlist`, {
+      productId: this.product.id
+    }, { responseType: 'text' }).subscribe({
+      next: () => {
+        this.wishlistLoading = false;
+        this.wishlistSuccess = 'Added to wishlist!';
+        setTimeout(() => this.wishlistSuccess = '', 3000);
+      },
+      error: () => {
+        this.wishlistLoading = false;
+      }
+    });
+  }
 
-  // ===== Review =====
-  setRating(star: number)   { this.reviewRating  = star; }
-  setHovered(star: number)  { this.hoveredStar   = star; }
-  clearHover()              { this.hoveredStar   = 0; }
+  setRating(star: number)  { this.reviewRating = star; }
+  setHovered(star: number) { this.hoveredStar  = star; }
+  clearHover()             { this.hoveredStar  = 0; }
 
   submitReview(): void {
     if (!this.reviewRating || !this.reviewComment.trim()) {
@@ -223,22 +153,19 @@ export class ProductDetails implements OnInit {
     this.reviewError   = '';
     this.reviewSuccess = '';
 
-    const body = {
+    this.http.post(`${environment.baseUrl}ProductReview`, {
       productId:   this.product.id,
       affiliateId: this.affiliateId,
       comment:     this.reviewComment,
       rating:      this.reviewRating,
       createdAt:   new Date().toISOString()
-    };
-
-    this.http.post(`${environment.baseUrl}ProductReview`, body).subscribe({
+    }).subscribe({
       next: () => {
         this.reviewSuccess  = 'Review added successfully!';
         this.reviewLoading  = false;
         this.showReviewForm = false;
         this.reviewComment  = '';
         this.reviewRating   = 0;
-        // إعادة تحميل المنتج عشان الريفيو الجديد يظهر
         this.loadProduct(this.product.id);
       },
       error: () => {

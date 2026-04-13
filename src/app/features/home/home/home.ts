@@ -1,11 +1,5 @@
-<<<<<<< HEAD
-import { Component } from '@angular/core';
-import { ProductService } from '../../../services/product/product';
-import { Product } from '../../../models/product';
-=======
 import { Component, OnInit } from '@angular/core';
 import { ProductService } from '../../../services/product/product-service';
->>>>>>> 0a46da4048b0f3ffac5edf89007655a5df6acc70
 import { FourProduct } from '../../../shared/components/four-product/four-product';
 import { Hero } from '../components/hero/hero';
 import { Cartcollection } from '../components/cartcollection/cartcollection';

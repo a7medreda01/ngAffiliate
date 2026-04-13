@@ -2,11 +2,9 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
-<<<<<<< HEAD
 import { environment } from '../../shared/environment/environment';
-=======
 import { jwtDecode } from 'jwt-decode';
->>>>>>> 0a46da4048b0f3ffac5edf89007655a5df6acc70
+
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -15,8 +13,8 @@ export class AuthService {
 
   private apiUrl = environment.baseUrl.replace(/\/api\/$/, '');
 
-   private apiUrl = 'https://localhost:44394';
-  //private apiUrl = 'http://localhost:5220';
+  //  private apiUrl = 'https://localhost:44394';
+  // private apiUrl = 'http://localhost:5220';
 
 
   private currentUser$ = new BehaviorSubject<any>(this.getUser());

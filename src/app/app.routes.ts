@@ -16,6 +16,7 @@ import { Checkout } from './features/checkout/checkout';
 import { CartComponent } from './pages/cart/cart';
 import { CategoryComponent } from './pages/category/category';
 import { OrderDetails } from './features/account/my-orders/order-details/order-details';
+import { EditProduct } from './features/merchant/edit-product/edit-product';
 
 // export const routes: Routes = [
 //   {
@@ -95,6 +96,7 @@ export const routes: Routes = [
       component: MainLayout,
       children: [{ path: '', component: Home }]
     },
+    { path: 'edit-product/:id', component: EditProduct },
     {
       path: 'account',
       component: Account,
