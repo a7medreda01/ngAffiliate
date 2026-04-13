@@ -8,7 +8,7 @@ import { Dressstyle } from '../components/dressstyle/dressstyle';
 
 @Component({
   selector: 'app-home',
-  imports: [Hero, Cartcollection, Cardreview, FourProduct, Dressstyle],
+  imports: [Hero, Cardreview, FourProduct, Dressstyle],
   templateUrl: './home.html',
   styleUrl: './home.css',
 })
