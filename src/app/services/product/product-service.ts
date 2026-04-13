@@ -105,29 +105,69 @@
 
 
 
+// import { Injectable } from '@angular/core';
+// import { HttpClient, HttpParams } from '@angular/common/http';
+// import { Observable, of } from 'rxjs';
+// import { Product } from '../../models/product';
+// import { environment } from '../../shared/environment/environment';
+
+// @Injectable({
+//   providedIn: 'root',
+// })
+// export class ProductService {
+//   constructor(private http: HttpClient) {}
+
+//   products!: Product[];
+
+//   getProductById(id: number): Observable<Product | undefined> {
+//     return of(this.products.find(p => p.id === id));
+//   }
+
+//   getProducts(type?: string): Observable<any> {
+//     let params = new HttpParams();
+//     if (type) {
+//       params = params.set('Type', type);
+//     }
+//    return this.http.get(`${environment.baseUrl}products`, { params });
+//   }
+// }
+
+
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable, of } from 'rxjs';
-import { Product } from '../../models/product';
-import { environment } from '../../shared/environment/environment';
+import { Observable } from 'rxjs';
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: 'root'
 })
 export class ProductService {
+  baseUrl = 'https://localhost:7110/api/products';
+
+  products: any[] = [];
+
   constructor(private http: HttpClient) {}
 
-  products!: Product[];
-
-  getProductById(id: number): Observable<Product | undefined> {
-    return of(this.products.find(p => p.id === id));
+  getProducts(type?: string): Observable<any[]> {
+    return this.http.get<any[]>(this.baseUrl);
   }
 
-  getProducts(type?: string): Observable<any> {
-    let params = new HttpParams();
-    if (type) {
-      params = params.set('Type', type);
-    }
-   return this.http.get(`${environment.baseUrl}products`, { params });
+  getAllProducts(): Observable<any[]> {
+    return this.http.get<any[]>(this.baseUrl);
+  }
+
+  getProductsByCategory(categoryId: number): Observable<any[]> {
+    return this.http.get<any[]>(`${this.baseUrl}/category/${categoryId}`);
+  }
+
+  getProductsByMerchant(merchantId: number): Observable<any[]> {
+    return this.http.get<any[]>(`${this.baseUrl}/merchant/${merchantId}`);
+  }
+
+  addProduct(data: FormData): Observable<any> {
+    return this.http.post<any>(this.baseUrl, data);
+  }
+
+  updateProduct(id: number, product: any) {
+    return this.http.put(`${this.baseUrl}/${id}`, product);
   }
 }

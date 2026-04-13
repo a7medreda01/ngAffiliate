@@ -1,0 +1,250 @@
+<div class="catalog-layout">
+
+  <aside class="sidebar">
+    <div>
+      <div class="sidebar-brand">
+        <h2>SHOP.CO</h2>
+      </div>
+
+      <nav class="sidebar-menu">
+        @for (item of sidebarItems; track item) {
+          <button
+            class="sidebar-link"
+            [class.active]="activeSidebarItem === item"
+            (click)="setActiveSidebarItem(item)">
+            {{ item }}
+          </button>
+        }
+      </nav>
+    </div>
+
+    <div class="sidebar-footer">
+      <button class="quick-action-btn">+ Quick Action</button>
+    </div>
+  </aside>
+
+  <div class="catalog-main">
+    <div class="catalog-page">
+      <div class="catalog-shell">
+
+        <div class="catalog-header">
+          <div>
+            <h1>Product Catalog</h1>
+            <p>Manage your storefront inventory, stock levels, pricing, and product status.</p>
+          </div>
+
+          <div class="header-actions">
+            <button class="outline-btn">Export CSV</button>
+            <button
+              class="dark-btn"
+              (click)="showAddForm = !showAddForm; showEditForm = false">
+              Add New Product
+            </button>
+          </div>
+        </div>
+
+        @if (showAddForm) {
+          <div class="add-product-form">
+            <div class="form-header">
+              <h3>Add New Product</h3>
+              <p>Fill in the details below to add a new item to your catalog.</p>
+            </div>
+
+            <div class="form-grid">
+              <div class="form-group">
+                <label>Product Name</label>
+                <input
+                  type="text"
+                  placeholder="Enter product name"
+                  [(ngModel)]="newProduct.name">
+              </div>
+
+              <div class="form-group">
+                <label>Category</label>
+                <select [(ngModel)]="newProduct.categoryId">
+                  <option [ngValue]="null" disabled>Select Category</option>
+                  @for (category of categories; track category.id) {
+                    @if (category.id !== 0) {
+                      <option [ngValue]="category.id">
+                        {{ category.name }}
+                      </option>
+                    }
+                  }
+                </select>
+              </div>
+
+              <div class="form-group full-width">
+                <label>Description</label>
+                <input
+                  type="text"
+                  placeholder="Enter description"
+                  [(ngModel)]="newProduct.description">
+              </div>
+
+              <div class="form-group">
+                <label>Price</label>
+                <input
+                  type="number"
+                  placeholder="Enter price"
+                  [(ngModel)]="newProduct.price">
+              </div>
+
+              <div class="form-group">
+                <label>Stock</label>
+                <input
+                  type="number"
+                  placeholder="Enter stock"
+                  [(ngModel)]="newProduct.stock">
+              </div>
+
+              <div class="form-group">
+                <label>Platform Commission %</label>
+                <input
+                  type="number"
+                  placeholder="Enter commission"
+                  [(ngModel)]="newProduct.platformCommissionPct">
+              </div>
+
+              <div class="form-group">
+                <label>Product Image</label>
+                <input type="file" (change)="onFileSelected($event)">
+              </div>
+            </div>
+
+            <div class="form-actions">
+              <button class="outline-btn" (click)="showAddForm = false">Cancel</button>
+              <button class="dark-btn" (click)="addProduct()">Save Product</button>
+            </div>
+          </div>
+        }
+
+        @if (showEditForm) {
+          <div class="add-product-form">
+            <div class="form-header">
+              <h3>Edit Product</h3>
+              <p>Update the selected product details.</p>
+            </div>
+
+            <div class="form-grid">
+              <div class="form-group">
+                <label>Product Name</label>
+                <input
+                  type="text"
+                  placeholder="Enter product name"
+                  [(ngModel)]="editProductData.name">
+              </div>
+
+              <div class="form-group">
+                <label>Category</label>
+                <select [(ngModel)]="editProductData.categoryId">
+                  <option [ngValue]="null" disabled>Select Category</option>
+                  @for (category of categories; track category.id) {
+                    @if (category.id !== 0) {
+                      <option [ngValue]="category.id">
+                        {{ category.name }}
+                      </option>
+                    }
+                  }
+                </select>
+              </div>
+
+              <div class="form-group full-width">
+                <label>Description</label>
+                <input
+                  type="text"
+                  placeholder="Enter description"
+                  [(ngModel)]="editProductData.description">
+              </div>
+
+              <div class="form-group">
+                <label>Price</label>
+                <input
+                  type="number"
+                  placeholder="Enter price"
+                  [(ngModel)]="editProductData.price">
+              </div>
+
+              <div class="form-group">
+                <label>Stock</label>
+                <input
+                  type="number"
+                  placeholder="Enter stock"
+                  [(ngModel)]="editProductData.stock">
+              </div>
+
+              <div class="form-group">
+                <label>Platform Commission %</label>
+                <input
+                  type="number"
+                  placeholder="Enter commission"
+                  [(ngModel)]="editProductData.platformCommissionPct">
+              </div>
+
+              <!-- <div class="form-group">
+                <label>New Image (optional)</label>
+                <input type="file" (change)="onEditFileSelected($event)">
+              </div> -->
+            </div>
+
+            <div class="form-actions">
+              <button class="outline-btn" (click)="showEditForm = false">Cancel</button>
+              <button class="dark-btn" (click)="updateProduct()">Update Product</button>
+            </div>
+          </div>
+        }
+
+        <div class="catalog-toolbar">
+          <div class="categories">
+            @for (category of categories; track category.id) {
+              <button
+                class="category-btn"
+                [class.active]="selectedCategory === category.name"
+                (click)="selectCategory(category)">
+                {{ category.name }}
+              </button>
+            }
+          </div>
+
+          <div class="search-box">
+            <input
+              type="text"
+              placeholder="Search catalog..."
+              [(ngModel)]="searchTerm"
+              (input)="onSearch()">
+          </div>
+        </div>
+
+        <div class="products-grid">
+          @for (product of filteredProducts; track product.id) {
+            <div class="product-card">
+              <div class="product-image">
+                <img [src]="getImageUrl(product.imageUrl)" [alt]="product.name">
+              </div>
+
+              <div class="product-info">
+                <div class="product-top">
+                  <span class="badge">{{ product.categoryName }}</span>
+                </div>
+
+                <div class="title-price">
+                  <h3>{{ product.name }}</h3>
+                  <span>{{ product.price }} EGP</span>
+                </div>
+
+                <p class="stock-status">
+                  {{ product.status }} ({{ product.stock }} units)
+                </p>
+
+                <div class="card-actions">
+                  <button class="edit-btn" (click)="openEditForm(product)">Edit Product</button>
+                  <button class="more-btn">•••</button>
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>

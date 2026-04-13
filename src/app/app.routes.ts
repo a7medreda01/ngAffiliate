@@ -12,6 +12,7 @@ import { PaymentOptions } from './features/account/payment-options/payment-optio
 import { MyOrders } from './features/account/my-orders/my-orders';
 import { Wishlist } from './features/wishlist/wishlist/wishlist';
 import { Checkout } from './features/checkout/checkout';
+import { ProductCatalog } from './features/merchant/product-catalog/product-catalog';
 import { OrderDetails } from './features/account/my-orders/order-details/order-details';
 import { CartComponent } from './pages/cart/cart';
 export const routes: Routes = [
@@ -40,6 +41,7 @@ export const routes: Routes = [
   { path: 'cart', component: CartComponent },
   { path: 'wishlist', component: Wishlist },
   { path: 'checkout', component: Checkout },
+  { path: 'merchant/products', component: ProductCatalog },
   { path: '**', component: NotFound }
 
 ];
