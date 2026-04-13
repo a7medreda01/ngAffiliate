@@ -5,7 +5,7 @@ import { Observable } from 'rxjs';
 @Injectable({ providedIn: 'root' })
 export class AccountService {
   private http   = inject(HttpClient);
-  private apiUrl = 'https://localhost:44394';
+  private apiUrl = 'https://localhost:5220';
 
   // جيب بيانات المستخدم الحالي
  getMe(): Observable<any> {
