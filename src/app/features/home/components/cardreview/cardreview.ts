@@ -4,9 +4,15 @@ import { ProductService } from '../../../../services/product/product-service';
 
 @Component({
   selector: 'app-cardreview',
-  imports: [CommonModule],
+  imports: [CommonModule,Cardreview],
   templateUrl: './cardreview.html',
   styleUrl: './cardreview.css',
+})
+
+@Component({
+  selector: 'app-cardreview',
+  templateUrl: './cardreview.component.html',
+  styleUrls: ['./cardreview.component.css']
 })
 export class Cardreview implements OnInit {
   reviews: any[] = [];
@@ -20,7 +26,7 @@ export class Cardreview implements OnInit {
           p.reviews.map((r: any) => ({
             ...r,
             productName: p.name,
-            reviewerName: p.merchantName 
+            reviewerName: p.merchantName
           }))
         );
       },
