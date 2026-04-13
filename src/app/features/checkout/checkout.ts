@@ -17,7 +17,7 @@ export class Checkout implements OnInit {
   private http        = inject(HttpClient);
   private router      = inject(Router);
 
-  private baseUrl = 'https://localhost:44394/api';
+  private baseUrl = 'https://localhost:5220/api';
 
   readonly items   = this.cartService.items;
   readonly summary = this.cartService.summary;

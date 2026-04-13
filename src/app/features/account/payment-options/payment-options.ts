@@ -20,7 +20,7 @@ export class PaymentOptions implements OnInit {
 
   transactions: any[] = [];
 
-  private baseUrl = 'https://localhost:44394/api/Affiliate';
+  private baseUrl = 'https://localhost:5220/api/Affiliate';
 
   constructor(private http: HttpClient) {}
 
