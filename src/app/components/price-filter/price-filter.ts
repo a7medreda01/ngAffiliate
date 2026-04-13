@@ -7,6 +7,7 @@ import { FormsModule } from '@angular/forms';
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './price-filter.html',
+  templateUrl: './price-filter.html',  // ✅ استخدم ده
   styleUrls: ['./price-filter.css']
 })
 export class PriceFilterComponent {
@@ -28,14 +29,15 @@ export class PriceFilterComponent {
   });
 
   updateMin(event: Event): void {
-    const val = +(event.target as HTMLInputElement).value;
-    const clamped = Math.min(val, this.value().max - 1);
-    this.valueChange.emit({ ...this.value(), min: clamped });
-  }
-
-  updateMax(event: Event): void {
-    const val = +(event.target as HTMLInputElement).value;
-    const clamped = Math.max(val, this.value().min + 1);
-    this.valueChange.emit({ ...this.value(), max: clamped });
-  }
+  const val = +(event.target as HTMLInputElement).value;
+  const clamped = Math.min(val, this.value().max - 1);
+  this.valueChange.emit({ ...this.value(), min: clamped });
 }
+
+updateMax(event: Event): void {
+  const val = +(event.target as HTMLInputElement).value;
+  const clamped = Math.max(val, this.value().min + 1);
+  this.valueChange.emit({ ...this.value(), max: clamped });
+}
+}
+

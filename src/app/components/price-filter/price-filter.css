@@ -1,5 +1,6 @@
 
 
+
 .price-filter {
   padding: 0;
 }
@@ -93,4 +94,59 @@
   font-size: 14px;
   font-weight: 600;
   color: #000;
+}
+/* Simple double range slider styling */
+.price-filter {
+  margin-top: 14px;
+  padding-top: 10px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.price-filter h4 {
+  font-size: 14px;
+  font-weight: 700;
+  margin: 0 0 10px;
+}
+
+.range-slider {
+  position: relative;
+  height: 28px;
+}
+
+.range-slider input[type='range'] {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 8px;
+  width: 100%;
+  pointer-events: none;
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+}
+
+.range-slider input[type='range']::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #111827;
+  pointer-events: auto;
+  cursor: pointer;
+}
+
+.range-slider input[type='range']::-webkit-slider-runnable-track {
+  height: 3px;
+  background: #e5e7eb;
+  border-radius: 999px;
+}
+
+.price-inputs {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 6px;
+  color: #111827;
+  font-weight: 700;
+  font-size: 13px;
 }

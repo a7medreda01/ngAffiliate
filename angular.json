@@ -92,13 +92,7 @@
       }
     }
   },
-  "cli": {
-
-
-
-    "analytics": "c197b851-852f-4ff1-8e65-b7ce56651075"
-
-
-
-  }
+ "cli": {
+  "analytics": false
+}
 }

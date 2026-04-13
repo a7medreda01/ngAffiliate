@@ -1,19 +1,18 @@
-import { Injectable, signal } from '@angular/core';
-import { CartItem, CartSummary } from '../../models/cart-item';
+import { Injectable, inject, signal } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { CartItem, CartSummary, CartResponse } from '../../models/cart-item';
 import { Product } from '../../models/product';
+import { environment } from '../../shared/environment/environment';
+import { firstValueFrom } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CartService {
-  private readonly STORAGE_KEY = 'cart_items';
-  private readonly DELIVERY_FEE = 15;
-  private readonly COUPON_CODES: Record<string, number> = {
-    'SAVE20': 20,
-    'SAVE10': 10,
-    'WELCOME': 15
-  };
-  private appliedDiscount = 0;
+  private readonly http = inject(HttpClient);
+  private readonly apiUrl = `${environment.baseUrl}cart`;
+  private readonly cartIdKey = 'ngAffiliate.cart.id';
+  private readonly storageKey = 'ngAffiliate.cart.v1';
 
   // State
   private readonly _items = signal<CartItem[]>([]);
@@ -32,70 +31,139 @@ export class CartService {
   readonly loading = this._loading.asReadonly();
 
   constructor() {
-    this.loadFromStorage();
+    this.loadCart();
   }
 
-  private loadFromStorage(): void {
-    try {
-      const stored = localStorage.getItem(this.STORAGE_KEY);
-      if (stored) {
-        const items: CartItem[] = JSON.parse(stored);
-        this._items.set(items);
-        this.recalculateSummary();
-      }
-    } catch {
-      console.warn('Failed to load cart from localStorage');
-    }
+  private getLocalCartId(): number | null {
+    const raw = localStorage.getItem(this.cartIdKey);
+    if (!raw) return null;
+    const id = Number(raw);
+    return Number.isFinite(id) && id > 0 ? id : null;
   }
 
-  private saveToStorage(): void {
-    try {
-      localStorage.setItem(this.STORAGE_KEY, JSON.stringify(this._items()));
-    } catch {
-      console.warn('Failed to save cart to localStorage');
-    }
+  private setLocalCartId(id: number | null): void {
+    if (id && id > 0) localStorage.setItem(this.cartIdKey, String(id));
+    else localStorage.removeItem(this.cartIdKey);
   }
 
-  private recalculateSummary(): void {
-    const items = this._items();
-    const subtotal = items.reduce((sum, item) => sum + item.total, 0);
-    const discount = subtotal * (this.appliedDiscount / 100);
-    const deliveryFee = items.length > 0 ? this.DELIVERY_FEE : 0;
-    const total = subtotal - discount + deliveryFee;
+  private async ensureCartId(): Promise<number> {
+    const existing = this.getLocalCartId();
+    if (existing) return existing;
+    const created = await firstValueFrom(this.http.post<any>(this.apiUrl, {}));
+    const newId = Number(created?.id);
+    if (!newId) throw new Error('Failed to create cart');
+    this.setLocalCartId(newId);
+    return newId;
+  }
 
-    this._summary.set({
-      subtotal: Math.round(subtotal * 100) / 100,
-      discount: Math.round(discount * 100) / 100,
-      deliveryFee,
-      total: Math.round(total * 100) / 100,
-      itemCount: items.reduce((count, item) => count + item.quantity, 0)
+  private mapApiCartToItems(cart: any): CartItem[] {
+    const items = Array.isArray(cart?.items) ? cart.items : [];
+    return items.map((it: any) => {
+      const unitPrice = Number(it?.product?.price ?? it?.unitPrice ?? 0);
+      const qty = Math.max(1, Number(it?.quantity ?? 1));
+      const imageFile = it?.product?.imageUrl;
+      const image = imageFile
+        ? `${environment.baseUrl.replace(/\/api\/?$/, '')}/images/products/${imageFile}`
+        : 'assets/images/placeholder.png';
+      return {
+        id: Number(it?.id ?? 0) || undefined,
+        productId: Number(it?.productId ?? it?.product?.id ?? 0),
+        productName: String(it?.product?.name ?? `Product #${it?.productId ?? ''}`),
+        description: String(it?.product?.description ?? ''),
+        price: unitPrice,
+        image,
+        quantity: qty,
+        total: unitPrice * qty
+      } satisfies CartItem;
     });
+  }
+
+  private calcSummary(items: CartItem[]): CartSummary {
+    const subtotal = items.reduce((sum, it) => sum + it.price * it.quantity, 0);
+    const discount = 0;
+    const deliveryFee = subtotal > 0 ? 15 : 0;
+    const total = Math.max(0, subtotal - discount + deliveryFee);
+    const itemCount = items.reduce((sum, it) => sum + it.quantity, 0);
+    return { subtotal, discount, deliveryFee, total, itemCount };
+  }
+
+  private persist(items: CartItem[]): void {
+    try {
+      localStorage.setItem(this.storageKey, JSON.stringify(items));
+    } catch {
+      // ignore storage failures (private mode, quota, etc.)
+    }
+  }
+
+  private loadFromStorage(): CartItem[] {
+    try {
+      const raw = localStorage.getItem(this.storageKey);
+      if (!raw) return [];
+      const parsed = JSON.parse(raw) as CartItem[];
+      return Array.isArray(parsed) ? parsed : [];
+    } catch {
+      return [];
+    }
+  }
+
+  private setLocal(items: CartItem[]): void {
+    const normalized = items.map((it) => ({
+      ...it,
+      quantity: Math.max(1, it.quantity),
+      total: it.price * Math.max(1, it.quantity)
+    }));
+    this._items.set(normalized);
+    this._summary.set(this.calcSummary(normalized));
+    this.persist(normalized);
+  }
+
+  async loadCart(): Promise<void> {
+    this._loading.set(true);
+    try {
+      const cartId = await this.ensureCartId();
+      const response = await firstValueFrom(
+        this.http.get<any>(`${this.apiUrl}/${cartId}`)
+      );
+      this.setLocal(this.mapApiCartToItems(response));
+    } catch (error) {
+      // Offline/demo fallback
+      const items = this.loadFromStorage();
+      this.setLocal(items);
+    } finally {
+      this._loading.set(false);
+    }
   }
 
   async addToCart(product: Product, quantity: number = 1): Promise<void> {
     this._loading.set(true);
     try {
+      const cartId = await this.ensureCartId();
+      await firstValueFrom(
+        this.http.post(
+          `${this.apiUrl}/${cartId}/items`,
+          { productId: product.id, quantity }
+        )
+      );
+      await this.loadCart();
+    } catch (error) {
       const items = [...this._items()];
-      const existing = items.find(i => i.productId === product.id);
-
+      const existing = items.find((x) => x.productId === product.id);
       if (existing) {
         existing.quantity += quantity;
         existing.total = existing.price * existing.quantity;
       } else {
+        const price = product.price ?? 0;
         items.push({
           productId: product.id,
           productName: product.name,
-          description: product.description,
-          price: product.price,
-          image: product.image ?? product.images?.[0] ?? '',
-          quantity,
-          total: product.price * quantity
+          description: product.description ?? '',
+          price,
+          image: product.image ?? product.images?.[0] ?? 'assets/images/placeholder.png',
+          quantity: Math.max(1, quantity),
+          total: price * Math.max(1, quantity)
         });
       }
-
-      this._items.set(items);
-      this.recalculateSummary();
-      this.saveToStorage();
+      this.setLocal(items);
     } finally {
       this._loading.set(false);
     }
@@ -109,14 +177,24 @@ export class CartService {
 
     this._loading.set(true);
     try {
-      const items = this._items().map(item =>
-        item.productId === productId
-          ? { ...item, quantity, total: item.price * quantity }
-          : item
+      const cartId = await this.ensureCartId();
+      const item = this._items().find((x) => x.productId === productId && !!x.id);
+      if (!item?.id) throw new Error('Item id not found');
+      await firstValueFrom(
+        this.http.put(
+          `${this.apiUrl}/${cartId}/items/${item.id}`,
+          { quantity }
+        )
       );
-      this._items.set(items);
-      this.recalculateSummary();
-      this.saveToStorage();
+      await this.loadCart();
+    } catch (error) {
+      const items = [...this._items()];
+      const it = items.find((x) => x.productId === productId);
+      if (it) {
+        it.quantity = Math.max(1, quantity);
+        it.total = it.price * it.quantity;
+        this.setLocal(items);
+      }
     } finally {
       this._loading.set(false);
     }
@@ -125,38 +203,60 @@ export class CartService {
   async removeFromCart(productId: number): Promise<void> {
     this._loading.set(true);
     try {
-      const items = this._items().filter(item => item.productId !== productId);
-      this._items.set(items);
-      this.recalculateSummary();
-      this.saveToStorage();
+      const cartId = await this.ensureCartId();
+      const item = this._items().find((x) => x.productId === productId && !!x.id);
+      if (!item?.id) throw new Error('Item id not found');
+      await firstValueFrom(
+        this.http.delete(
+          `${this.apiUrl}/${cartId}/items/${item.id}`
+        )
+      );
+      await this.loadCart();
+    } catch (error) {
+      const items = this._items().filter((x) => x.productId !== productId);
+      this.setLocal(items);
     } finally {
       this._loading.set(false);
     }
   }
 
   async applyCoupon(code: string): Promise<boolean> {
-    const discount = this.COUPON_CODES[code.toUpperCase()];
-    if (discount) {
-      this.appliedDiscount = discount;
-      this.recalculateSummary();
+    try {
+      const result = await firstValueFrom(
+        this.http.post<boolean>(
+          `${this.apiUrl}/coupon`,
+          { code },
+          { withCredentials: true }
+        )
+      );
+      if (result) {
+        await this.loadCart();
+      }
+      return result;
+    } catch (error) {
+      // Simple offline demo coupon
+      const normalized = (code ?? '').trim().toUpperCase();
+      if (normalized !== 'SAVE10') return false;
+      const current = this._items();
+      const summary = this.calcSummary(current);
+      const discount = Math.round(summary.subtotal * 0.1);
+      const total = Math.max(0, summary.subtotal - discount + summary.deliveryFee);
+      this._summary.set({ ...summary, discount, total });
       return true;
     }
-    return false;
   }
 
   async clearCart(): Promise<void> {
     this._loading.set(true);
     try {
-      this._items.set([]);
-      this.appliedDiscount = 0;
-      this._summary.set({
-        subtotal: 0,
-        discount: 0,
-        deliveryFee: 0,
-        total: 0,
-        itemCount: 0
-      });
-      this.saveToStorage();
+      const cartId = await this.ensureCartId();
+      await firstValueFrom(
+        this.http.delete(`${this.apiUrl}/${cartId}`)
+      );
+      this.setLocalCartId(null);
+      this.setLocal([]);
+    } catch (error) {
+      this.setLocal([]);
     } finally {
       this._loading.set(false);
     }

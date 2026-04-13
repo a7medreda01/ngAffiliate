@@ -12,6 +12,10 @@
   @if (errorMsg) {
     <div class="alert alert-danger">{{ errorMsg }}</div>
   }
+    <!-- 🔹 Column 2 (Main Image) -->
+    <div class="col-md-5 text-center main-img-div">
+      <img [src]="selectedImage || product.images?.[0] || ''" class="main-img img-fluid">
+    </div>
 
   <div *ngIf="product">
     <div class="row">
@@ -49,6 +53,69 @@
           } @else {
             <p class="text-danger mb-0">Out of Stock</p>
           }
+
+        <div class="rating text-warning ">
+
+          <!-- Full Stars -->
+          <i class="bi bi-star-fill" *ngFor="let star of fullStars"></i>
+
+          <!-- Half Star -->
+          <i class="bi bi-star-half" *ngIf="halfStar"></i>
+
+          <!-- Empty Stars -->
+          <i class="bi bi-star" *ngFor="let star of emptyStars"></i>
+        </div>
+        <p class="text-black-50 ms-2">{{product.rating}}/5</p>
+        <p class="text-black-50 ms-3">|</p>
+        @if((product.stockQuantity ?? 0) > 0){
+        <p class="text-success ms-3">In stock</p>
+        }
+        @if((product.stockQuantity ?? 0) == 0){
+        <p class="text-danger-emphasis ms-3">Out of Stock</p>
+        }
+      </div>
+
+      <!-- Price -->
+      <div class="d-flex gap-2 align-content-center align-items-center">
+        <h4 class="fw-bold ">${{product.price}}</h4>
+        <h4 class="text-muted text-decoration-line-through ">${{product.oldPrice}}</h4>
+        <h6 class="rounded-pill p-2 py-1 text-danger bg-danger-subtle">-{{product.sale}}%</h6>
+      </div>
+      <!-- Description -->
+      <p class="text-muted mt-3">
+        {{product.description}}
+      </p>
+
+      <hr>
+
+      <!-- Colors -->
+      <div class="  d-flex flex-column">
+        <strong>Select Colors</strong>
+        <div class="d-inline">
+          <span *ngFor="let c of colors" class="color-box ms-1 my-2" [ngClass]="c" [class.active]="selectedColor === c"
+            (click)="selectedColor = c">
+          </span>
+        </div>
+      </div>
+      <hr>
+      <!-- Sizes -->
+      <div class="mb-3 d-flex flex-column">
+        <strong>Choose Size</strong>
+        <div class="d-inline">
+          <button *ngFor="let s of sizes" class="btn btn-sm m-1 rounded-pill border-0 size-btn px-3"
+            [ngClass]="selectedSize === s ? 'text-light bg-dark' : 'btn-outline-secondary'" (click)="selectedSize = s">
+            {{s}}
+          </button>
+        </div>
+      </div>
+
+      <!-- Quantity + Buttons -->
+      <div class="d-flex align-items-center gap-3 mb-3">
+
+        <div class="qty-box d-flex">
+          <button class="btn btn-light" (click)="decrease()">-</button>
+          <span class="px-3 d-flex align-items-center">{{product.quantity}}</span>
+          <button class="btn btn-light btn-increase text-light" (click)="increase()">+</button>
         </div>
 
         <!-- Price -->
@@ -101,6 +168,92 @@
           <div>
             <h6>Free Delivery</h6>
             <small>Enter your postal code for Delivery Availability</small>
+  <!-- ///dtails  -->
+  <ul class="nav nav-pills col-12 mt-5">
+    <li class="nav-item col-4">
+      <button class=" nav-link-btn active " data-bs-toggle="pill" data-bs-target="#details">Details</button>
+    </li>
+    <li class="nav-item col-4">
+      <button class="nav-link-btn  " data-bs-toggle="pill" data-bs-target="#reviews">Reviews</button>
+    </li>
+    <li class="nav-item col-4">
+      <button class="nav-link-btn" data-bs-toggle="pill" data-bs-target="#faqs">FAQs</button>
+    </li>
+  </ul>
+
+  <div class="tab-content mt-3">
+    <!-- details  -->
+    <div class="tab-pane fade show active" id="details">
+      <div class="m-lg-4 m-1">
+        <ul>
+          <li *ngFor="let item of specsArray">
+            {{ item }}.
+          </li>
+        </ul>
+      </div>
+
+    </div>
+
+    <!-- reviews  -->
+    <div class="tab-pane fade" id="reviews">
+      <div class="d-flex justify-content-between align-items-center mx-5 my-3">
+        <!-- Title + Count -->
+        <div class="d-flex gap-2 align-items-center">
+          <h5 class="mb-0">All Reviews</h5>
+          <h6 class="text-muted mb-0">({{product.reviews?.length ?? 0}})</h6>
+        </div>
+
+        <!-- Buttons -->
+        <div class="d-flex gap-2 align-items-center">
+          <!-- Filter button -->
+          <button class="btn bg-dark-subtle rounded-pill d-none d-md-flex p-2">
+            <i class="bi bi-sliders2-vertical"></i>
+          </button>
+
+          <!-- Sort dropdown -->
+          <div class="dropdown">
+            <button class="btn bg-dark-subtle rounded-pill dropdown-toggle p-2" type="button" data-bs-toggle="dropdown">
+              Sort by
+            </button>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="#">Newest</a></li>
+              <li><a class="dropdown-item" href="#">Oldest</a></li>
+            </ul>
+          </div>
+
+          <!-- Write Review button -->
+          <button class="btn bg-black text-light rounded-pill d-none d-md-flex px-3 py-2">
+            Write a Review
+          </button>
+        </div>
+      </div>
+      <div class="m-lg-4 m-1">
+        <div class="d-flex flex-wrap justify-content-center gap-4 ">
+          <div *ngFor="let item of product.reviews" class="card col-md-5 p-3  col-10">
+
+            <!-- ⭐ Stars -->
+            <div class="mb-2">
+              <i *ngFor="let star of [1,2,3,4,5]" class="bi"
+                [ngClass]="star <= item.rating ? 'bi-star-fill text-warning' : 'bi-star text-muted'">
+              </i>
+            </div>
+
+            <!-- 👤 Name + Verified -->
+            <div class="fw-bold">
+              {{ item.userName }}
+              <i class="bi bi-patch-check-fill text-success ms-1"></i>
+            </div>
+
+            <!-- 💬 Comment -->
+            <div class="text-muted my-2">
+              {{ item.comment }}
+            </div>
+
+            <!-- 📅 Date -->
+            <div class="small text-secondary">
+              {{ item.createdAt | date:'mediumDate' }}
+            </div>
+
           </div>
         </div>
 
