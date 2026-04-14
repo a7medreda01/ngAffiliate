@@ -1,0 +1,30 @@
+/* Quantity selector */
+.quantity-selector {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: #f3f4f6;
+  border-radius: 999px;
+  padding: 6px 10px;
+}
+.btn-decrease,
+.btn-increase {
+  width: 30px;
+  height: 30px;
+  border-radius: 999px;
+  border: none;
+  background: #111827;
+  color: #fff;
+  font-weight: 900;
+  cursor: pointer;
+}
+.btn-decrease[disabled] {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.quantity {
+  min-width: 22px;
+  text-align: center;
+  font-weight: 900;
+  color: #111827;
+}

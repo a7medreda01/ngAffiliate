@@ -101,4 +101,99 @@
       <a href="/category" class="btn-continue">Continue Shopping</a>
     </div>
   }
+  @if (loading()) {
+    <div class="loading-overlay">
+      <div class="spinner"></div>
+    </div>
+  }
+
+  <nav class="breadcrumb">
+    <a routerLink="/">Home</a>
+    <span>›</span>
+    <span class="current">Cart</span>
+  </nav>
+
+  <h1 class="title">Your Cart</h1>
+
+  <div class="layout">
+    <!-- Items -->
+    <section class="items">
+      @if (items().length === 0) {
+        <div class="empty">
+          <h3>Your cart is empty</h3>
+          <p>Add items from the category page to see them here.</p>
+          <a class="btn-primary" routerLink="/category">Continue shopping</a>
+        </div>
+      } @else {
+        <div class="item-card" *ngFor="let item of items(); trackBy: trackByProductId">
+          <img class="thumb" [src]="item.image" [alt]="item.productName" />
+
+          <div class="meta">
+            <div class="top">
+              <div class="name">{{ item.productName }}</div>
+              <button class="btn-icon" type="button" (click)="remove(item.productId)" aria-label="Remove item">
+                <i class="bi bi-trash"></i>
+              </button>
+            </div>
+            <div class="desc">{{ item.description }}</div>
+
+            <div class="bottom">
+              <div class="price">${{ item.price }}</div>
+              <app-quantity-selector
+                [quantity]="item.quantity"
+                (quantityChange)="updateQty(item.productId, $event)">
+              </app-quantity-selector>
+              <div class="line-total">${{ item.total }}</div>
+            </div>
+          </div>
+        </div>
+      }
+    </section>
+
+    <!-- Summary -->
+    <aside class="summary">
+      <h3>Order Summary</h3>
+
+      <div class="row">
+        <span>Subtotal</span>
+        <span>${{ summary().subtotal }}</span>
+      </div>
+      <div class="row">
+        <span>Discount</span>
+        <span>-${{ summary().discount }}</span>
+      </div>
+      <div class="row">
+        <span>Delivery Fee</span>
+        <span>${{ summary().deliveryFee }}</span>
+      </div>
+      <div class="divider"></div>
+      <div class="row total">
+        <span>Total</span>
+        <span>${{ summary().total }}</span>
+      </div>
+
+      <div class="coupon">
+        <input
+          class="coupon-input"
+          type="text"
+          placeholder="Add promo code"
+          [value]="couponCode()"
+          (input)="onCouponInput($event)" />
+        <button class="btn-secondary" type="button" (click)="applyCoupon()">Apply</button>
+      </div>
+      @if (couponApplied()) {
+        <div class="coupon-state ok">Coupon applied. (Try <b>SAVE10</b>)</div>
+      }
+      @if (couponError()) {
+        <div class="coupon-state err">Invalid promo code.</div>
+      }
+
+      <button class="btn-primary w-full" type="button" (click)="checkout()">
+        Go to Checkout
+      </button>
+      <button class="btn-link w-full" type="button" (click)="clearCart()">
+        Clear cart
+      </button>
+    </aside>
+  </div>
 </div>

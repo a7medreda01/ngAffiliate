@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ProductService } from '../../../services/product/product-service';
+import { Product } from '../../../models/product';
 import { FourProduct } from '../../../shared/components/four-product/four-product';
 import { Hero } from '../components/hero/hero';
 import { Cartcollection } from '../components/cartcollection/cartcollection';
@@ -8,7 +9,7 @@ import { Dressstyle } from '../components/dressstyle/dressstyle';
 
 @Component({
   selector: 'app-home',
-  imports: [Hero, Cartcollection, Cardreview, FourProduct, Dressstyle],
+  imports: [Hero, Cartcollection, Cardreview, FourProduct,Cardreview, Dressstyle],
   templateUrl: './home.html',
   styleUrl: './home.css',
 })

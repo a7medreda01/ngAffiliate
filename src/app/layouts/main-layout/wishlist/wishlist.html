@@ -1,0 +1,30 @@
+<div class="container my-5 wishlist-page">
+
+    <div class="wishlist-header">
+      <h5>WishList ({{ products.length }})</h5>
+      <button class="btn border btn-move p-2 px-lg-4">Move All To Bag</button>
+    </div>
+  
+    <div class="products-grid my-5">
+      @for (product of products; track product.id) {
+        <app-product-card [product]="product"></app-product-card>
+      }
+    </div>
+  
+    <div class="just-for-you-header mb-5">
+      <div class="title-group">
+        <div class="before-div rounded-2"></div>
+        <p class="title-div p-2 m-0">Just For You</p>
+      </div>
+  
+      <button class="view-all-btn btn">See All</button>
+    </div>
+  
+    <div class="products-grid">
+      @for (product of justForYouProducts; track product.id) {
+        <app-product-card [product]="product"></app-product-card>
+      }
+    </div>
+  
+    <hr class="my-5">
+  </div>

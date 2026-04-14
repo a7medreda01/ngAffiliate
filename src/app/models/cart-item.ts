@@ -7,6 +7,7 @@ export interface Coupon {
 }
 
 export interface CartItem {
+  id?: number;
   productId: number;
   productName: string;
   description: string;

@@ -44,7 +44,10 @@ export interface Category {
   slug: string;
   createdAt?: Date;
   count?: number; // اختياري - ممكن نحسبه في الفرونت
+
 }
+
+
 
 export interface FilterOptions {
   categories: string[];
@@ -52,6 +55,7 @@ export interface FilterOptions {
   maxPrice: number;
   sortBy: 'popular' | 'price-low' | 'price-high' | 'newest';
   search?: string;
+
 }
 
 export type SortOption = FilterOptions['sortBy'];

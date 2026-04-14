@@ -1,7 +1,9 @@
+
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../shared/environment/environment';
+
 
 @Injectable({
   providedIn: 'root'
@@ -31,6 +33,7 @@ export class ProductService {
     return this.http.get<any[]>(`${this.baseUrl}products`, { params });
   }
 
+
   getTopProducts(): Observable<any[]> {
     return this.getProducts({ type: 'top' });
   }
@@ -57,5 +60,13 @@ export class ProductService {
 
   getCategories(): Observable<any[]> {
     return this.http.get<any[]>(`${this.baseUrl}categories`);
+
+
+  getProducts() :Observable<any>{
+    return this.http.get(`${environment.baseUrl}products`)
   }
-}
+
+
+ 
+
+    

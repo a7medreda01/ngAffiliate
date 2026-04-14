@@ -1,0 +1,301 @@
+<div class="container">
+    <div class="links d-flex justify-content-between flex-wrap gap-2">
+      <div class="d-flex gap-2">
+        <a routerLink="/" class="homeLink">Home</a>
+        <p class="m-0">/ My Account</p>
+      </div>
+  
+      <div class="d-flex">
+        <p class="m-0">Welcome! </p>
+        <p class="text-danger m-0 ms-1">Md Rimel</p>
+      </div>
+    </div>
+  </div>
+  
+  <div class="container mt-4">
+    <div class="row">
+      <div class="col-md-3">
+        <div class="sidebar-box">
+          <h6>Manage My Account</h6>
+          <div class="sidebar-links">
+            <a class="link-mav" [class.active]="activeSection === 'profile'" (click)="setSection('profile')">My Profile</a>
+            <a class="link-mav" [class.active]="activeSection === 'address'" (click)="setSection('address')">Address Book</a>
+            <a class="link-mav" [class.active]="activeSection === 'payment'" (click)="setSection('payment')">My Payment Options</a>
+          </div>
+  
+          <h6>My Orders</h6>
+          <div class="sidebar-links">
+            <a class="link-mav" [class.active]="activeSection === 'orders'" (click)="setSection('orders')">My Orders</a>
+            <a class="link-mav" [class.active]="activeSection === 'cancelation'" (click)="setSection('cancelation')">My Cancelation</a>
+          </div>
+        </div>
+      </div>
+  
+      <div class="col-md-9">
+        <div class="div-router">
+  
+          @if (activeSection === 'profile') {
+            <div class="edit-parent-div p-3">
+              <h4 class="mb-3 edit">Edit Your Profile</h4>
+  
+              <form>
+                <div class="d-flex justify-content-between gap-1 gap-lg-5 flex-column flex-lg-row">
+                  <div class="mb-3 w-100">
+                    <label>First Name</label>
+                    <input type="text" class="form-control form-input" [(ngModel)]="profileData.firstName" name="firstName">
+                  </div>
+  
+                  <div class="mb-3 w-100">
+                    <label>Last Name</label>
+                    <input type="text" class="form-control form-input" [(ngModel)]="profileData.lastName" name="lastName">
+                  </div>
+                </div>
+  
+                <div class="d-flex justify-content-between gap-1 gap-lg-5 flex-column flex-lg-row">
+                  <div class="mb-3 w-100">
+                    <label>Email</label>
+                    <input type="text" class="form-control form-input" [(ngModel)]="profileData.email" name="email">
+                  </div>
+  
+                  <div class="mb-3 w-100">
+                    <label>Address</label>
+                    <input type="text" class="form-control form-input" [(ngModel)]="profileData.address" name="address">
+                  </div>
+                </div>
+  
+                <div class="d-flex flex-column gap-1 mt-3">
+                  <div class="mb-3 w-100">
+                    <label>Change Password</label>
+                    <input type="password" class="form-control form-input" placeholder="Current Password" [(ngModel)]="profileData.currentPassword" name="currentPassword">
+                  </div>
+  
+                  <div class="mb-3 w-100">
+                    <input type="password" class="form-control form-input" placeholder="New Password" [(ngModel)]="profileData.newPassword" name="newPassword">
+                  </div>
+  
+                  <div class="mb-3 w-100">
+                    <input type="password" class="form-control form-input" placeholder="Confirm New Password" [(ngModel)]="profileData.confirmNewPassword" name="confirmNewPassword">
+                  </div>
+                </div>
+  
+                <div class="text-end">
+                  <a class="btn p-3 m-2">Cancel</a>
+                  <a class="btn" id="save-changes-btn">Save Changes</a>
+                </div>
+              </form>
+            </div>
+          }
+  
+          @if (activeSection === 'address') {
+            <div class="edit-parent-div p-3">
+              <h4 class="mb-3 edit">Edit Your Address</h4>
+  
+              <form>
+                <div class="d-flex flex-column input-bill">
+                  <label>Street Address</label>
+                  <input class="input form-control" type="text" [(ngModel)]="addressData.streetAddress" name="streetAddress">
+                </div>
+  
+                <div class="d-flex flex-column input-bill">
+                  <label>Apartment, floor, etc (optional)</label>
+                  <input class="input form-control" type="text" [(ngModel)]="addressData.apartment" name="apartment">
+                </div>
+  
+                <div class="d-flex flex-column input-bill">
+                  <label>Town/City</label>
+                  <input class="input form-control" type="text" [(ngModel)]="addressData.city" name="city">
+                </div>
+  
+                <div class="text-end">
+                  <a class="btn" id="save-changes-btn">Save Changes</a>
+                </div>
+              </form>
+            </div>
+          }
+  
+          @if (activeSection === 'payment') {
+            <div class="container d-flex justify-content-between flex-column flex-lg-row w-100 gap-4">
+              <div>
+                <div class="d-flex gap-3 mb-3">
+                  <img src="https://img.icons8.com/color/48/visa.png" width="50" />
+                  <img src="https://img.icons8.com/color/48/mastercard-logo.png" width="50" />
+                  <img src="https://upload.wikimedia.org/wikipedia/commons/9/93/PayPal_Logo2014.png" width="50" />
+                </div>
+  
+                <div class="card-preview" [class.flip]="isFlipped">
+                  <div class="card front" [ngStyle]="{'background': getCardColor(cardType)}">
+                    <div class="d-flex justify-content-between text-center align-items-center">
+                      <div class="d-flex">
+                        <img [src]="cardIcon" width="50" />
+                        <p class="m-0 d-flex ms-2 align-items-center">{{ cardType }}</p>
+                      </div>
+                      <span class="text-warning"><i class="bi bi-credit-card-fill"></i></span>
+                    </div>
+  
+                    <h5 class="mt-4">{{ cardNumber || '#### #### #### ####' }}</h5>
+  
+                    <div class="d-flex justify-content-between mt-4">
+                      <div>
+                        <small>Card Holder</small>
+                        <div>{{ cardHolder || 'YOUR NAME' }}</div>
+                      </div>
+                      <div>
+                        <small>Expires</small>
+                        <div>{{ expiry || 'MM/YY' }}</div>
+                      </div>
+                    </div>
+                  </div>
+  
+                  <div class="card back">
+                    <div class="strip"></div>
+                    <div class="cvv-box">
+                      {{ cvv || '***' }}
+                    </div>
+                  </div>
+                </div>
+  
+                <form class="mt-4">
+                  <input class="form-control mb-2 payment-control" placeholder="Card Number" [value]="cardNumber" (input)="onCardNumber($event)">
+                  <input class="form-control mb-2 payment-control" placeholder="Card Holder" [value]="cardHolder" (input)="cardHolder = $any($event.target).value">
+  
+                  <div class="row">
+                    <div class="col">
+                      <input class="form-control payment-control2 mb-2" placeholder="MM/YY" [value]="expiry" (input)="onExpiryInput($event)">
+                    </div>
+  
+                    <div class="col">
+                      <input class="form-control payment-control2 mb-2" placeholder="CVV" [value]="cvv" (focus)="isFlipped = true"
+                        (blur)="isFlipped = false" (input)="cvv = $any($event.target).value">
+                    </div>
+                  </div>
+  
+                  <button type="button" class="btn btn-danger w-100" (click)="addCard()">
+                    Save Card
+                  </button>
+                </form>
+              </div>
+  
+              <div class="mt-4">
+                @if (savedCards.length > 0) {
+                  <h6>Saved Cards</h6>
+                }
+  
+                <div class="saved-card" *ngFor="let c of savedCards; let i = index">
+                  <div>
+                    <img [src]="c.cardIcon" width="50" class="mx-2" />
+                    {{ c.type }} - **** {{ c.last4 }}
+                  </div>
+                  <a (click)="deleteCard(i)" class="text-danger"><i class="bi bi-x-circle m-2 ms-5"></i></a>
+                </div>
+              </div>
+            </div>
+          }
+  
+          @if (activeSection === 'orders') {
+            <div class="container my-4">
+              <h4 class="title">My Orders</h4>
+  
+              <div class="order-card mb-4 shadow-sm" *ngFor="let order of orders">
+                <div class="order-header d-flex justify-content-between flex-wrap">
+                  <div>
+                    <small>ORDER PLACED</small><br>
+                    <strong>{{ order.date }}</strong>
+                  </div>
+  
+                  <div>
+                    <small>TOTAL</small><br>
+                    <strong>$ {{ getTotal(order) }}</strong>
+                  </div>
+  
+                  <div>
+                    <small>STATUS</small><br>
+                    <span class="badge" [ngClass]="getStatusClass(order.status)">
+                      {{ order.status }}
+                    </span>
+                  </div>
+  
+                  <div>
+                    <small>ORDER ID</small><br>
+                    <strong>#{{ order.id }}</strong>
+                  </div>
+                </div>
+  
+                <div class="order-body d-flex justify-content-between align-items-center flex-wrap">
+                  <div class="order-items">
+                    <div *ngFor="let item of order.items">
+                      {{ item.name }} × {{ item.quantity }}
+                    </div>
+                  </div>
+  
+                  <div class="order-actions text-end mt-3 mt-md-0">
+                    <button class="btn btn-outline-primary btn-sm me-2">
+                      View Details
+                    </button>
+  
+                    <button class="btn btn-outline-secondary btn-sm" *ngIf="order.status === 'Delivered'">
+                      Buy Again
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          }
+  
+          @if (activeSection === 'cancelation') {
+            <div class="container my-4">
+              <h4 class="title">My Cancelled Orders</h4>
+  
+              <div class="order-card mb-4 shadow-sm" *ngFor="let order of cancelledOrders">
+                <div class="order-header cancel-header d-flex justify-content-between flex-wrap">
+                  <div>
+                    <small>ORDER PLACED</small><br>
+                    <strong>{{ order.date }}</strong>
+                  </div>
+  
+                  <div>
+                    <small>TOTAL</small><br>
+                    <strong>$ {{ getTotal(order) }}</strong>
+                  </div>
+  
+                  <div>
+                    <small>STATUS</small><br>
+                    <span class="badge bg-danger">
+                      Cancelled
+                    </span>
+                  </div>
+  
+                  <div>
+                    <small>ORDER ID</small><br>
+                    <strong>#{{ order.id }}</strong>
+                  </div>
+                </div>
+  
+                <div class="order-body d-flex justify-content-between align-items-center flex-wrap">
+                  <div class="order-items">
+                    <div *ngFor="let item of order.items">
+                      {{ item.name }} × {{ item.quantity }}
+                    </div>
+                  </div>
+  
+                  <div class="order-actions text-end mt-3 mt-md-0">
+                    <button class="btn btn-outline-secondary btn-sm me-2">
+                      View Details
+                    </button>
+  
+                    <button class="btn btn-danger btn-sm">
+                      Reorder
+                    </button>
+                  </div>
+                </div>
+              </div>
+  
+              <div *ngIf="cancelledOrders.length === 0" class="text-center text-muted mt-5">
+                No cancelled orders
+              </div>
+            </div>
+          }
+  
+        </div>
+      </div>
+    </div>
+  </div>
