@@ -1,18 +1,65 @@
+
+import { Injectable, inject } from '@angular/core';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { Observable } from 'rxjs';
 import { environment } from '../../shared/environment/environment';
-import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-
-import {  of } from 'rxjs';
-import { Product } from '../../models/product';
-
-import { Observable } from 'rxjs/internal/Observable';
 
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: 'root'
 })
 export class ProductService {
-  constructor(private http: HttpClient) {}
+  private http    = inject(HttpClient);
+  private baseUrl = environment.baseUrl;
+
+  getProducts(filters?: {
+    search?:     string;
+    type?:       string;
+    minPrice?:   number;
+    maxPrice?:   number;
+    categoryId?: number;
+    pageNumber?: number;
+    pageSize?:   number;
+  }): Observable<any[]> {
+    let params = new HttpParams();
+    if (filters?.search)     params = params.set('Search',     filters.search);
+    if (filters?.type)       params = params.set('Type',       filters.type);
+    if (filters?.minPrice)   params = params.set('MinPrice',   filters.minPrice);
+    if (filters?.maxPrice)   params = params.set('MaxPrice',   filters.maxPrice);
+    if (filters?.categoryId) params = params.set('CategoryId', filters.categoryId);
+    if (filters?.pageNumber) params = params.set('PageNumber', filters.pageNumber);
+    if (filters?.pageSize)   params = params.set('PageSize',   filters.pageSize);
+
+    return this.http.get<any[]>(`${this.baseUrl}products`, { params });
+  }
+
+
+  getTopProducts(): Observable<any[]> {
+    return this.getProducts({ type: 'top' });
+  }
+
+  getNewArrivals(): Observable<any[]> {
+    return this.getProducts({ type: 'new' });
+  }
+
+  getProductById(id: number): Observable<any> {
+    return this.http.get<any>(`${this.baseUrl}products/${id}`);
+  }
+
+  getProductsByMerchant(merchantId: number): Observable<any[]> {
+    return this.http.get<any[]>(`${this.baseUrl}products/merchant/${merchantId}`);
+  }
+
+  addProduct(formData: FormData): Observable<any> {
+    return this.http.post<any>(`${this.baseUrl}products`, formData);
+  }
+
+  updateProduct(id: number, body: any): Observable<any> {
+    return this.http.put<any>(`${this.baseUrl}products/${id}`, body);
+  }
+
+  getCategories(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.baseUrl}categories`);
 
 
   getProducts() :Observable<any>{
@@ -20,79 +67,6 @@ export class ProductService {
   }
 
 
-  // تعريف المصفوفة كـ Product[] يضمن لك أن البيانات مطابقة للـ Model
-  products: Product[] = [
-    {
-      id: 1,
-      name: 'Apple iPhone 14',
-      description: 'Latest Apple iPhone with advanced camera',
-      details: '6.1-inch display, A15 Bionic chip, dual-camera system, iOS 16',
-      price: 999,
-      oldPrice: 1099,
-      sale: 10,
-      stockQuantity: 50,
-      images: [
-        'assets/images/products/p1.png',
-        'assets/images/products/p2.png',
-      ],
-      reviews: [
-        { id: 1, userName: 'Ali', comment: 'Amazing phone!', rating: 5, createdAt: new Date('2026-01-05') },
-        { id: 2, userName: 'Sara', comment: 'Worth the price', rating: 4, createdAt: new Date('2026-02-10') }
-      ],
-      rating: 4.5,
-      quantity: 1,
-      brandName: 'Apple',
-      typeName: 'Smartphone'
-    },
-    {
-      id: 2,
-      name: 'Samsung Galaxy S23',
-      description: 'Flagship Samsung phone with top features',
-      details: '6.2-inch display, Snapdragon 8 Gen 2, triple-camera system, Android 13',
-      price: 899,
-      oldPrice: 999,
-      sale: 10,
-      stockQuantity: 40,
-      images: [
-        'assets/images/products/p3.png',
-        'assets/images/products/p2.png',
-      ],
-      reviews: [
-        { id: 3, userName: 'Hassan', comment: 'Excellent display', rating: 5, createdAt: new Date('2026-03-12') },
-        { id: 4, userName: 'Nour', comment: 'Battery could be better', rating: 4, createdAt: new Date('2026-03-15') }
-      ],
-      rating: 4.3,
-      quantity: 1,
-      brandName: 'Samsung',
-      typeName: 'Smartphone'
-    },
-    {
-      id: 3,
-      name: 'Sony WH-1000XM5',
-      description: 'Industry-leading noise-canceling headphones',
-      details: 'Over-ear, wireless, 30-hour battery, Adaptive Sound Control...',
-      price: 399,
-      oldPrice: 449,
-      sale: 11,
-      stockQuantity: 30,
-      images: [
-        'assets/images/products/p4.png',
-        'assets/images/products/p2.png',
-      ],
-      reviews: [
-        { id: 5, userName: 'Mona', comment: 'Best noise cancellation!', rating: 5, createdAt: new Date('2026-02-20') },
-        { id: 6, userName: 'Ahmed', comment: 'Best Sound Mood!', rating: 4.5, createdAt: new Date('2026-02-21') }
-      ],
-      rating: 4.8,
-      quantity: 1,
-      brandName: 'Sony',
-      typeName: 'Headphones'
-    },
-    // يمكنك إضافة بقية المنتجات هنا بنفس النمط
-  ];
+ 
 
-
-  getProductById(id: number): Observable<Product | undefined> {
-    return of(this.products.find(p => p.id === id));
-  }
-}
+    

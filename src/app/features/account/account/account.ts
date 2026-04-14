@@ -14,18 +14,20 @@ export class Account implements OnInit {
   private router = inject(Router);
   private auth   = inject(AuthService);
 
-  userName = '';
+  userName   = '';
+  isMerchant = false;
 
- ngOnInit(): void {
-  const user = this.auth.getUser();
-  this.userName = user?.fullName || user?.userName || '';
+  ngOnInit(): void {
+    const user = this.auth.getUser();
+    this.userName = user?.fullName || user?.userName || '';
 
-  // ← احذف السطر القديم وضيفده
-  const role = this.auth.getRole();
-  if (role === 'Affiliate') {
-    this.router.navigate(['/affiliate/account/edit']);
-  } else if (role === 'Merchant') {
-    this.router.navigate(['/merchant/account/edit']);
+    const role = this.auth.getRole();
+    this.isMerchant = role === 'Merchant';
+
+    if (role === 'Affiliate') {
+      this.router.navigate(['/affiliate/account/edit']);
+    } else if (role === 'Merchant') {
+      this.router.navigate(['/merchant/account/edit']);
+    }
   }
-}
 }

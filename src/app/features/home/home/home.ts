@@ -26,7 +26,7 @@ export class Home implements OnInit {
   }
 
   loadTopProducts(): void {
-    this.productService.getProducts('top').subscribe({
+    this.productService.getProducts({ type: 'top' }).subscribe({
       next: (res: any) => {
         this.topProducts = this.mapProducts(res);
       },
@@ -35,7 +35,7 @@ export class Home implements OnInit {
   }
 
   loadNewArrivals(): void {
-    this.productService.getProducts('new').subscribe({
+    this.productService.getProducts({ type: 'new' }).subscribe({
       next: (res: any) => {
         this.newProducts = this.mapProducts(res);
       },

@@ -1,0 +1,173 @@
+.merchant-layout {
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* ===== Sidebar ===== */
+.sidebar {
+  width: 230px;
+  min-width: 230px;
+  background: #000;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+}
+
+/* Brand */
+.sidebar-brand {
+  padding: 22px 20px 20px;
+  border-bottom: 1px solid #ffffff12;
+}
+
+.sidebar-brand h2 {
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  margin: 0;
+  color: #fff;
+}
+
+.brand-accent {
+  color: #ffffff70;
+}
+
+/* Nav Links */
+.sidebar-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 14px 10px;
+}
+
+.sidebar-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 13.5px;
+  font-weight: 500;
+  color: #ffffff60;
+  text-decoration: none;
+  transition: all 0.2s;
+  border: none;
+  background: none;
+  cursor: pointer;
+  width: 100%;
+}
+
+.sidebar-link i {
+  font-size: 15px;
+  color: #ffffff40;
+  transition: color 0.2s;
+}
+
+.sidebar-link:hover {
+  background: #ffffff10;
+  color: #fff;
+}
+
+.sidebar-link:hover i {
+  color: #fff;
+}
+
+.sidebar-link.active {
+  background: #fff;
+  color: #000;
+  font-weight: 600;
+}
+
+.sidebar-link.active i {
+  color: #000;
+}
+
+/* ===== Footer ===== */
+.sidebar-footer {
+  padding: 14px 12px;
+  border-top: 1px solid #ffffff12;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* User Card */
+.user-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 8px;
+  border-radius: 8px;
+  background: #ffffff08;
+}
+
+.user-avatar {
+  width: 34px;
+  height: 34px;
+  min-width: 34px;
+  border-radius: 50%;
+  background: #fff;
+  color: #000;
+  font-size: 14px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.user-details {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.user-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: #fff;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.user-role {
+  font-size: 11px;
+  color: #ffffff40;
+  font-weight: 400;
+}
+
+/* Logout */
+.logout-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: transparent;
+  border: 1px solid #ffffff15;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 12.5px;
+  color: #ffffff50;
+  cursor: pointer;
+  width: 100%;
+  transition: all 0.2s;
+}
+
+.logout-btn:hover {
+  background: #dc2626;
+  color: #fff;
+  border-color: #dc2626;
+}
+
+.logout-btn i { font-size: 14px; }
+
+/* ===== Content ===== */
+.merchant-content {
+  flex: 1;
+  overflow-y: auto;
+  background: #f9fafb;
+}
