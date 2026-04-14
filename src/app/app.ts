@@ -19,5 +19,8 @@ export class App {
     return this.router.url === '/login' || this.router.url === '/register';
     
   }
+  isMerchantRoute(): boolean {
+  return this.router.url.startsWith('/merchant');
+}
 }
  

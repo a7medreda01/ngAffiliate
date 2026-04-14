@@ -1,0 +1,52 @@
+<div class="merchant-layout">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div>
+      <!-- Brand -->
+      <div class="sidebar-brand">
+        <h2>SHOP<span class="brand-accent">.CO</span></h2>
+      </div>
+
+      <!-- Nav -->
+      <nav class="sidebar-menu">
+        <a class="sidebar-link" routerLink="/merchant/home" routerLinkActive="active">
+          <i class="bi bi-grid"></i> Catalog
+        </a>
+        <a class="sidebar-link" routerLink="/merchant/orders" routerLinkActive="active">
+          <i class="bi bi-bag"></i> Orders
+        </a>
+        <a class="sidebar-link" routerLink="/merchant/account/edit" routerLinkActive="active">
+          <i class="bi bi-person"></i> Profile
+        </a>
+      </nav>
+    </div>
+
+    <!-- Footer -->
+    <div class="sidebar-footer">
+
+      <!-- User Info -->
+      <div class="user-card">
+        <div class="user-avatar">
+          {{ merchantName.charAt(0).toUpperCase() }}
+        </div>
+        <div class="user-details">
+          <p class="user-name">{{ merchantName }}</p>
+          <span class="user-role">Merchant</span>
+        </div>
+      </div>
+
+      <!-- Logout -->
+      <button class="logout-btn" (click)="logout()">
+        <i class="bi bi-box-arrow-right"></i> Logout
+      </button>
+
+    </div>
+  </aside>
+
+  <!-- Content -->
+  <div class="merchant-content">
+    <router-outlet></router-outlet>
+  </div>
+
+</div>

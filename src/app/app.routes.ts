@@ -13,10 +13,13 @@ import { MyOrders } from './features/account/my-orders/my-orders';
 import { Wishlist } from './features/wishlist/wishlist/wishlist';
 import { Checkout } from './features/checkout/checkout';
 
+import { ProductCatalog } from './features/merchant/product-catalog/product-catalog';
+import { OrderDetails } from './features/account/my-orders/order-details/order-details';
 import { CartComponent } from './pages/cart/cart';
 import { CategoryComponent } from './pages/category/category';
-import { OrderDetails } from './features/account/my-orders/order-details/order-details';
 import { EditProduct } from './features/merchant/edit-product/edit-product';
+import { MerchantLayout } from './layouts/merchant-layout/merchant-layout';
+import { AddProduct } from './features/merchant/add-product/add-product';
 
 // export const routes: Routes = [
 //   {
@@ -72,6 +75,7 @@ export const routes: Routes = [
 
   { path: 'wishlist', component: Wishlist },
   { path: 'checkout', component: Checkout },
+
   {
     path: 'orders',
     loadComponent: () =>
@@ -87,27 +91,24 @@ export const routes: Routes = [
 
 
   // ─── Merchant Only ────────────────────────────
-  {
+{
   path: 'merchant',
   canActivate: [merchantGuard],
+  component: MerchantLayout, // ← ضيف الـ layout هنا
   children: [
-    {
-      path: 'home',
-      component: MainLayout,
-      children: [{ path: '', component: Home }]
-    },
+    { path: 'home',             component: ProductCatalog },
     { path: 'edit-product/:id', component: EditProduct },
     {
       path: 'account',
       component: Account,
       children: [
-        { path: '', redirectTo: 'edit', pathMatch: 'full' },
+        { path: '',     redirectTo: 'edit', pathMatch: 'full' },
         { path: 'edit', component: EditProfile },
       ]
     },
+    { path: 'add-product', component: AddProduct },
   ]
 },
-
   // ─── Fallback ─────────────────────────────────
   { path: '', redirectTo: '/login', pathMatch: 'full' },
 
